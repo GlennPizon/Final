@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 
 const authService = new AuthService();
 
+// AuthController
 export class AuthController {
   static async login(req: Request, res: Response) {
     const { email, password } = req.body;

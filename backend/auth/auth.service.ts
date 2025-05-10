@@ -5,6 +5,7 @@ import { Accounts } from '../accounts/accounts.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { generateJwtToken } from './jwt.utils';
 
+
 export class AuthService {
   private accountRepo = AppDataSource.getRepository(Accounts);
   private refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
@@ -71,4 +72,5 @@ export class AuthService {
     refresh.revokedByIp = ip;
     await this.refreshTokenRepo.save(refresh);
   }
+  
 }

@@ -1,8 +1,7 @@
 // src/auth/refresh-token.entity.ts
 import {
-    Entity, PrimaryGeneratedColumn, Column,
-    ManyToOne
-  } from 'typeorm';
+    Entity, PrimaryGeneratedColumn, Column, ManyToOne
+        } from 'typeorm';
   import { Accounts } from '../accounts/accounts.entity';
   
   @Entity()

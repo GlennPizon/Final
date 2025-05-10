@@ -19,6 +19,8 @@ const revokeSchema = Joi.object({
   token: Joi.string().required()
 });
 
+//auth routes
+
 router.post('/login', validate(loginSchema), AuthController.login);
 router.post('/refresh-token', validate(refreshSchema), AuthController.refresh);
 router.post('/revoke-token', validate(revokeSchema), AuthController.revoke);
