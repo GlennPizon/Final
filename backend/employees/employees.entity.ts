@@ -3,9 +3,9 @@ import {
     Entity, PrimaryGeneratedColumn, Column,
     ManyToOne, OneToMany
   } from 'typeorm';
-  import { Departments } from '../departments/department.entity';
-  import { Accounts } from '../accounts/account.entity';
-  import { Workflows } from '../workflows/workflow.entity';
+  import { Departments } from '../departments/departments.entity';
+  import { Accounts } from '../accounts/accounts.entity';
+  import { Workflows } from '../workflows/workflows.entity';
   import { Requests } from '../requests/request.entity';
   
   @Entity()

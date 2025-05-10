@@ -3,7 +3,7 @@ import {
     Entity, PrimaryGeneratedColumn, Column,
     ManyToOne, CreateDateColumn
   } from 'typeorm';
-  import { Employees } from '../employees/employee.entity';
+  import { Employees } from '../employees/employees.entity';
   
   export enum WorkflowStatus {
     Pending = 'Pending',

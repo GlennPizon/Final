@@ -3,7 +3,7 @@ import {
     Entity, PrimaryGeneratedColumn, Column,
     ManyToOne
   } from 'typeorm';
-  import { Accounts } from '../accounts/account.entity';
+  import { Accounts } from '../accounts/accounts.entity';
   
   @Entity()
   export class RefreshToken {

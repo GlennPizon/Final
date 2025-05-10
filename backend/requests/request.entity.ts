@@ -3,7 +3,7 @@ import {
     Entity, PrimaryGeneratedColumn, Column,
     ManyToOne, OneToMany
   } from 'typeorm';
-  import { Employees } from '../employees/employee.entity';
+  import { Employees } from '../employees/employees.entity';
   import { RequestItem } from './request-item.entity';
   
   @Entity()
