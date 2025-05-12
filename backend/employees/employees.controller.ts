@@ -46,4 +46,19 @@ export class EmployeeController {
       res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
     }
   }
+
+  static async transfer(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { departmentId } = req.body;
+      const employee = await service.getById(id);
+      employee.id = departmentId;
+      await service.update(id, employee);
+      res.json({ message: 'Employee transferred successfully' }); 
+      } catch (err: any) {
+        res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      }
+  }
+
+
 }
