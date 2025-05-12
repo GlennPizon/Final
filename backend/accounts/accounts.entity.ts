@@ -5,10 +5,11 @@ import {
   } from 'typeorm';
   import { RefreshToken } from '../auth/refresh-token.entity';
   import { Employees } from '../employees/employees.entity';
-  import { Role } from '../utils/Role.ts'
+  import { Role } from '../utils/Role';
+  
   @Entity()
   export class Accounts {
-    @PrimaryColumn('uuid')s
+    @PrimaryColumn('uuid')
     id: string;
   
     @Column({ unique: true })
