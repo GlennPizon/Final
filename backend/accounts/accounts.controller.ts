@@ -1,59 +1,159 @@
 // src/accounts/account.controller.ts
-import { Request, Response } from 'express';
-import { AccountService } from './accounts.service';
-import { StatusCodes } from 'http-status-codes';
+import { Request, Response } from "express";
+import { AccountService } from "./accounts.service";
+import { StatusCodes } from "http-status-codes";
+import { Role } from "../utils/Role";
+import { authorize } from "../middleware/authorize";
+import { validate } from "../middleware/validate-request";
+import Joi from "joi";
+import { Accounts } from "./accounts.entity";
+import { RefreshToken } from "../auth/refresh-token.entity";
 
-const service = new AccountService();
+const accountService = new AccountService();
 
 export class AccountController {
   static async register(req: Request, res: Response) {
     try {
-      const result = await service.register(req.body, req.headers.origin || '');
+      const { email, password, confirmPassword, firstname, lastname, title, acceptTerms } = req.body;
+      const origin: string = req.headers.origin || `http://localhost:${process.env.APP_PORT}`;
+      const result = await accountService.register({ email, password, confirmPassword, firstname, lastname, title, acceptTerms }, origin);
       res.status(StatusCodes.CREATED).json(result);
     } catch (err: any) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      console.error("Registration Error:", err);
+      res.status(StatusCodes.BAD_REQUEST).json({ msg: err.message || "Invalid email or password" });
     }
   }
 
   static async verifyEmail(req: Request, res: Response) {
     try {
       const { token } = req.query;
-      const result = await service.verifyEmail(token as string);
-      res.status(StatusCodes.OK).json(result);
-    } catch (err: any) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
-    }
-  }
-
-  static async getAll(req: Request, res: Response) {
-    const result = await service.getAll();
-    res.json(result);
-  }
-
-  static async getById(req: Request, res: Response) {
-    try {
-      const result = await service.getById(req.params.id);
+      const result = await accountService.verifyEmail(token as string);
       res.json(result);
-    } catch (err: any) {
-      res.status(StatusCodes.NOT_FOUND).json({ message: err.message });
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ msg: `Invalid email or not verified` });
     }
   }
 
-  static async update(req: Request, res: Response) {
+  static async authenticate(req: Request, res: Response) {
     try {
-      const result = await service.update(req.params.id, req.body);
+      const { email, password } = req.body;
+      const ipAddress: any = req.ip;
+      const { refreshToken, ...account } = await accountService.authenticate( email, password, ipAddress);
+      await this.setTokenCookie(res, refreshToken);
+      res.json(account);
+    } catch (err) {
+      res.status(StatusCodes.UNAUTHORIZED).json({ msg: `Invalid email or password` });
+    }
+  }
+
+  static async deleteAccount(req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      const result = await accountService.delete(id);
       res.json(result);
-    } catch (err: any) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+    } catch (err) {
+      res.status(StatusCodes.UNAUTHORIZED).json({ msg: `Invalid email or password` });
     }
   }
 
-  static async _delete(req: Request, res: Response) {
+  static async getAllAccounts(req: Request, res: Response) {
     try {
-      await service._delete(req.params.id);
-      res.json({ message: 'Account deleted' });
-    } catch (err: any) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
+      const result = await accountService.getAll();
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
     }
+  }
+
+  static async getAccountById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const result = await accountService.getById(id);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async updateAccount(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { email, password } = req.body;
+      const result = await accountService.update(id, { email, password });
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async createAccount(req: Request, res: Response) {
+    try {
+      const { title, firstName, lastName, email, password, confirmPassword, acceptTerms } = req.body;
+      const result = await accountService.create({ title, firstName, lastName, email, password, confirmPassword, acceptTerms });
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      const origin: string = req.get("origin") || "";
+      const result = await accountService.forgotPassword(email, origin);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response) {
+    try {
+      const { token, password, confirmPassword } = req.body;
+      const result = await accountService.resetPassword(token, password, confirmPassword);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async refreshToken(req: Request, res: Response) {
+    try {
+      const token = req.cookies.refreshToken;
+      const ipAddress:any = req.ip;
+      const result = await accountService.refreshToken(token, ipAddress);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async revokeToken(req: Request, res: Response) {
+    try {
+      const token = req.body.token || req.cookies.refreshToken;
+      const ipAddress:any = req.ip;
+      const result = await accountService.revokeToken(token, ipAddress);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async validateResetToken(req: Request, res: Response) {
+    try {
+      const { token } = req.body;
+      const result = await accountService.validateResetToken(token);
+      res.json(result);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json(err);
+    }
+  }
+
+  static async setTokenCookie(res: Response, token: string): Promise<void> {
+    const cookieOptions = {
+      httpOnly: true,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    };
+    res.cookie("refreshToken", token, cookieOptions);
   }
 }

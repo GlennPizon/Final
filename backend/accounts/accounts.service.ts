@@ -7,7 +7,7 @@ import { v4 as random } from "uuid";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../utils/send-email";
 import dotenv from "dotenv";
-import { MoreThan } from "typeorm";
+import { Any, MoreThan } from "typeorm";
 import { Role } from "../utils/Role";
 dotenv.config();
 
@@ -137,6 +137,7 @@ export class AccountService {
     account.passwordHash = await bcrypt.hash(password, 10);
     account.passwordReset = new Date();
     account.resetToken = null;
+    account.resetTokenExpires = null;
     await this.userRepo.save(account);
     return { message: "Password reset successful, you can now login" };
   }
