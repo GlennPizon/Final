@@ -61,3 +61,7 @@ export class EmployeeService {
   }
 
 }
+
+export default EmployeeService;
+
+
