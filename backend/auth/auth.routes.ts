@@ -19,10 +19,15 @@ const revokeSchema = Joi.object({
   token: Joi.string().required()
 });
 
+const logoutSchema = Joi.object({
+  token: Joi.string().required()
+});
+
 //auth routes
 
 router.post('/login', validate(loginSchema), AuthController.login);
 router.post('/refresh-token', validate(refreshSchema), AuthController.refresh);
 router.post('/revoke-token', validate(revokeSchema), AuthController.revoke);
+router.post('/logout', AuthController.logout); // Logout user
 
 export default router;
