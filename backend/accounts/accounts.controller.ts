@@ -2,12 +2,6 @@
 import { Request, Response } from "express";
 import { AccountService } from "./accounts.service";
 import { StatusCodes } from "http-status-codes";
-import { Role } from "../utils/Role";
-import { authorize } from "../middleware/authorize";
-import { validate } from "../middleware/validate-request";
-import Joi from "joi";
-import { Accounts } from "./accounts.entity";
-import { RefreshToken } from "../auth/refresh-token.entity";
 
 const accountService = new AccountService();
 
@@ -17,7 +11,7 @@ export class AccountController {
       const { email, password, confirmPassword, firstname, lastname, title, acceptTerms } = req.body;
       const origin: string = req.headers.origin || `http://localhost:${process.env.APP_PORT}`;
       const result = await accountService.register({ email, password, confirmPassword, firstname, lastname, title, acceptTerms }, origin);
-      res.status(StatusCodes.CREATED).json(result);
+      res.status(StatusCodes.CREATED).json(result); 
     } catch (err: any) {
       console.error("Registration Error:", err);
       res.status(StatusCodes.BAD_REQUEST).json({ msg: err.message || "Invalid email or password" });
