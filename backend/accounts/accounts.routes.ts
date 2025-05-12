@@ -1,24 +1,18 @@
-// src/accounts/account.routes.ts
 import { Router } from 'express';
 import { AccountController } from './accounts.controller';
-import { authorize } from '../middleware/authorize';
-import { Role } from '../utils/role';
 import { validate } from '../middleware/validate-request';
-import {
-  registerSchema,
-  updateAccountSchema
-} from './account.schema'; // optional if you keep validation here
+import { registerSchema } from './accounts.schema';
 
 const router = Router();
 
-// Public routes
 router.post('/register', validate(registerSchema), AccountController.register);
-router.get('/verify-email', AccountController.verifyEmail);
-
-// Protected routes
-router.get('/', authorize(Role.Admin), AccountController.getAll);
-router.get('/:id', authorize(), AccountController.getById);
-router.put('/:id', authorize(), validate(updateAccountSchema), AccountController.update);
-router.delete('/:id', authorize(Role.Admin), AccountController._delete);
+router.post('/verify-email', AccountController.verifyEmail); // Email verification
+router.post('/authenticate', AccountController.authenticate); // Authenticate user
+router.post('/refresh-token', AccountController.refreshToken); // Refresh JWT token
+router.post('/revoke-token', AccountController.revokeToken); // Revoke refresh token
+router.get('/', AccountController.getAllAccounts); // Get all accounts
+router.get('/:id', AccountController.getAccountById); // Get single account
+router.put('/:id', AccountController.updateAccount); // Update account
+router.delete('/:id', AccountController.deleteAccount); // Delete account
 
 export default router;
