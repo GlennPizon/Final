@@ -5,8 +5,8 @@ export const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   confirmPassword: Joi.ref('password'),
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
+  firstname: Joi.string().required(),
+  lastname: Joi.string().required(),
   title: Joi.string().required(),
   acceptTerms: Joi.boolean().valid(true).required()
 });
@@ -39,7 +39,7 @@ export const createAccountSchema = registerSchema;
 export const updateAccountSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string().min(6),
-  firstName: Joi.string(),
-  lastName: Joi.string(),
+  firstname: Joi.string(),
+  lastname: Joi.string(),
   title: Joi.string()
 });
