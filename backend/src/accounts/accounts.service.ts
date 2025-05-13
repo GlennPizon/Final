@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../utils/send-email";
 import dotenv from "dotenv";
 import { Any, MoreThan } from "typeorm";
-import { Role } from "../utils/Role";
+import { Role } from "../utils/role";
 dotenv.config();
 
 const jwtSecret = process.env.JWT_SECRET as string;
