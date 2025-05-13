@@ -1,3 +1,4 @@
+// src/requests/request.controller.ts
 import { Request, Response } from 'express';
 import { RequestService } from './request.service';
 import { StatusCodes } from 'http-status-codes';
@@ -6,28 +7,70 @@ const requestService = new RequestService();
 
 export class RequestController {
   static async create(req: Request, res: Response) {
-    const { employeeId, type, items } = req.body;
-    const result = await requestService.create({ employeeId, type, items });
-    res.status(StatusCodes.CREATED).json(result);
+    try {
+      const result = await requestService.create(req.body);
+      res.status(StatusCodes.CREATED).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
   }
 
   static async getAll(req: Request, res: Response) {
-    const requests = await requestService.getAll();
-    res.status(StatusCodes.OK).json(requests);
+    try {
+      const result = await requestService.getAll();
+      res.status(StatusCodes.OK).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
   }
 
   static async getMyRequests(req: Request, res: Response) {
-    const employeeId = req.user?.id;
-    const requests = await requestService.getRequestsByEmployee(employeeId);
-    res.status(StatusCodes.OK).json(requests);
+    try {
+      const userId = req.user?.id;
+      const result = await requestService.getMyRequests(userId);
+      res.status(StatusCodes.OK).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
   }
 
   static async getById(req: Request, res: Response) {
-    const { id } = req.params;
-    const request = await requestService.getById(id);
-    res.status(StatusCodes.OK).json(request);
+    try {
+      const { id } = req.params;
+      const result = await requestService.getById(id);
+      res.status(StatusCodes.OK).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.NOT_FOUND).json({ error: err.message });
+    }
+  }
+
+  static async getByEmployeeId(req: Request, res: Response) {
+    try {
+      const { employeeId } = req.params;
+      const result = await requestService.getByEmployeeId(employeeId);
+      res.status(StatusCodes.OK).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
   }
 
   static async update(req: Request, res: Response) {
-    const { id } = req.params;
-    const updatedRequest = await requestService.update(id, req.body
+    try {
+      const { id } = req.params;
+      const result = await requestService.update(id, req.body);
+      res.status(StatusCodes.OK).json(result);
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const result = await requestService.delete(id);
+      res.status(StatusCodes.OK).json({ message: 'Request deleted successfully' });
+    } catch (err: any) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: err.message });
+    }
+  }
+}
