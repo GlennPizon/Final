@@ -130,8 +130,13 @@ export class AccountController {
 
   static async refreshToken(req: Request, res: Response) {
     try {
-      const token = req.cookies?.refreshToken;
+      const token = req.cookies.refreshToken;
       const ipAddress:any = req.ip|| '127.0.0.1';
+
+      console.log("Cookies from Request:", req.cookies);
+      console.log("Refresh Token from Cookies:", req.cookies?.refreshToken);
+      console.log("IP Address:", ipAddress);
+
       if (!token) {
         return res.status(401).json({ message: "Unauthorized: No refresh token provided" });
       }

@@ -60,6 +60,24 @@ export class EmployeeService {
     await this.repo.remove(employee);
   }
 
+  
+   async transfer(employeeId: string, newDepartmentId: string, adminId: string) {
+    // 🚀 Find employee to transfer
+    const employee = await this.repo.findOne({ where: { id: employeeId }, relations: ["department"] });
+    if (!employee) throw new Error("Employee not found");
+
+    // 🚀 Validate new department exists
+    const newDepartment = await this.departmentRepo.findOneBy({ id: newDepartmentId });
+    if (!newDepartment) throw new Error("Invalid department");
+
+    // 🚀 Perform the transfer
+    employee.department = newDepartment;
+
+    await this.repo.save(employee);
+
+    return { employeeId, newDepartmentId, transferredBy: adminId };
+  }
+
 }
 
 export default EmployeeService;

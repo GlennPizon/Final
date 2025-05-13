@@ -15,3 +15,8 @@ export const updateEmployeeSchema = Joi.object({
   position: Joi.string(),
   status: Joi.string().valid('Active', 'Inactive'),
 });
+
+export const transferEmployeeSchema = Joi.object({
+  departmentId: Joi.string().uuid().required()
+});
+

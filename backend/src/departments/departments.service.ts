@@ -4,10 +4,11 @@ import { Departments } from './departments.entity';
 export class DepartmentService {
   private departmentRepo = AppDataSource.getRepository(Departments);
 
-  async create({ name, description }) {
-    const department = this.departmentRepo.create({ name, description });
-    await this.departmentRepo.save(department);
-    return department;
+  async create({name, description}) {
+    const department = new Departments();
+    department.name = name;
+    department.description = description;
+    return this.departmentRepo.save(department);
   }
 
   async getAll() {

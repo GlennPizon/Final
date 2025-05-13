@@ -7,8 +7,11 @@ const departmentService = new DepartmentService();
 export class DepartmentController {
   static async create(req: Request, res: Response) {
     const { name, description } = req.body;
-    const result = await departmentService.create({ name, description });
-    res.status(StatusCodes.CREATED).json(result);
+    const newDepartment = await departmentService.create({name, description});
+    if (!newDepartment) {
+      res.status(StatusCodes.BAD_REQUEST).send();
+    }
+    res.status(StatusCodes.CREATED).json(newDepartment);
   }
 
   static async getAll(req: Request, res: Response) {
@@ -17,7 +20,7 @@ export class DepartmentController {
   }
 
   static async getById(req: Request, res: Response) {
-    const { id } = req.params;
+    const  id  = req.params.id;
     const department = await departmentService.getById(id);
     res.status(StatusCodes.OK).json(department);
   }
@@ -29,8 +32,12 @@ export class DepartmentController {
   }
 
   static async delete(req: Request, res: Response) {
-    const { id } = req.params;
-    await departmentService.delete(id);
-    res.status(StatusCodes.NO_CONTENT).send();
+    try {
+      const { id } = req.params;
+      await departmentService.delete(id)
+      res.status(StatusCodes.OK).send({msg: `Account Deleted Successfully`});
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).send();
+    }
   }
 }
