@@ -1,10 +1,8 @@
 // src/data-source.ts
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
-import "reflect-metadata";
+import 'reflect-metadata'
 import mysql from 'mysql2/promise';
-
-
 import { Accounts } from './accounts/accounts.entity';
 import { RefreshToken } from './auth/refresh-token.entity';
 import { Employees } from './employees/employees.entity';
@@ -15,25 +13,28 @@ import { RequestItem } from './requests/request-item.entity';
 
 
 dotenv.config();
+// ✅ Load environment variables safely
+const dbhost: string = process.env.DB_HOST;
+const dbport: number = parseInt(process.env.DB_PORT); // 🔹 Ensure port is a number
+const dbuser: string = process.env.DB_USER ;
+const dbpassword: string = process.env.DB_PASS;
+const dbname: string = process.env.DB_NAME;
 
 const connectionOptions = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  port: parseInt(process.env.DB_PORT || '3306'),
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    port: parseInt(process.env.DB_PORT || '3306'),
 };
 
-const dbname = process.env.DB_NAME;
 
-
-
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: 'mysql',
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '3306'),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  host: dbhost,
+  port: dbport,
+  username: dbuser,
+  password: dbpassword,
+  database: dbname,
   synchronize: true,
   logging: false,
   entities: [
