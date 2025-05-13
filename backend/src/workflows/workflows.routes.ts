@@ -4,6 +4,7 @@ import { WorkflowController } from './workflows.controller';
 import { authorize } from '../middleware/authorize';
 import { validate } from '../middleware/validate-request';
 import { createWorkflowSchema, updateWorkflowStatusSchema } from './workflows.schema';
+import {Role} from '../utils/role'
 
 const router = Router();
 

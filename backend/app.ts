@@ -45,11 +45,21 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   errorHandler(err, req, res, next);
 });
 
-// Start Server
-initialize().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+
+
+// 🔹 Initialize DB and Start Server
+async function start() {
+  await initialize();
+
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    errorHandler(err, req, res, next);
   });
-}).catch(err => {
-  console.error('❌ Failed to start application:', err);
-});
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+
+  console.log("✅ Database initialized successfully.");
+}
+
+start();

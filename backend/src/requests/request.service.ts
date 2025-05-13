@@ -1,6 +1,6 @@
 // src/requests/request.service.ts
-import { AppDataSource } from '../../data-source';
-import { Requests } from './request.entity';
+import { AppDataSource } from '../data-source';
+import { Requests } from '../requests/request.entity';
 import { Employees } from '../employees/employees.entity';
 import { Repository } from 'typeorm';
 

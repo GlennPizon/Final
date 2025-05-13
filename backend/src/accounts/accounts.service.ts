@@ -1,5 +1,5 @@
 // src/accounts/account.service.ts
-import { AppDataSource } from "../data-source";
+import AppDataSource from "../data-source";
 import { Accounts } from "../accounts/accounts.entity";
 import { RefreshToken } from "../auth/refresh-token.entity";
 import bcrypt from "bcryptjs";
@@ -9,6 +9,7 @@ import { sendEmail } from "../utils/send-email";
 import dotenv from "dotenv";
 import { Role } from "../utils/role";
 import { MoreThan } from "typeorm";
+import { Repository } from "typeorm";
 
 dotenv.config();
 
@@ -63,6 +64,61 @@ export class AccountService {
     await this.userRepo.save(account);
     return { message: "Email verified successfully" };
   }
+
+  async create(params: any): Promise<Pick<Accounts, 'id' | 'email' | 'title' | 'firstName' | 'lastName' | 'role' | 'created' | 'updated'>> {
+   
+    
+    // Validate if email already exists
+    if (await this.userRepo.findOne({ where: { email: params.email } })) {
+      // If email already exists, send an email to the user
+      await this.sendAlreadyRegisteredEmail(params.email, params.origin);
+      // Throw an error to indicate that the email is already registered
+        throw new Error(`Email "${params.email}" is already registered`);
+    }
+    let pass;
+    if(params.password === params.confirmPassword && params.password !== null && params.confirmPassword !== null){
+      const salt = await bcrypt.genSalt(10);
+      pass = await bcrypt.hash(params.password, salt); // Hash the password
+    }else{
+      throw new Error("Password and Confirm Password do not match");
+    }
+
+    let id: string = random(); // Generate a random ID for the new account
+    // Check if the ID already exists in the database and generate a new one if it does
+    while (await this.userRepo.findOne({ where: { id } })) {
+      id = random();
+    }
+
+    let verificationToken = random(); // Generate a random verification token
+    // Check if the verification token already exists in the database and generate a new one if it does
+    while (await this.userRepo.findOne({ where: { verificationToken } })) {
+      verificationToken = random();
+
+ 
+    // Create account entity
+    const newAccount = new Accounts();
+    newAccount.id = id
+    newAccount.title = params.title;
+    newAccount.firstName = params.firstName;
+    newAccount.lastName = params.lastName;
+    newAccount.email = params.email;
+    newAccount.passwordHash = pass;
+    newAccount.acceptTerms = params.acceptTerms; // Fix typo
+    newAccount.role = Role.User; // Default role
+    newAccount.verificationToken = verificationToken; // Set the verification token
+    newAccount.verified = new Date();
+    newAccount.created = new Date();
+    newAccount.updated = new Date();
+
+
+    // Save account to the database
+    await this.userRepo.save(newAccount);
+
+    return this.basicDetails(newAccount);
+}
+ }
+
+
 
   async authenticate({ email, password }, ipAddress: string): Promise<any> {
     const user = await this.userRepo.findOneBy({ email });

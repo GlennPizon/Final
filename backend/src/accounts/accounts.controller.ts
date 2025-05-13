@@ -32,7 +32,7 @@ export class AccountController {
     try {
       const { email, password } = req.body;
       const ipAddress: any = req.ip;
-      const { refreshToken, ...account } = await accountService.authenticate( email, password, ipAddress);
+      const { refreshToken, ...account } = await accountService.authenticate( {email, password}, ipAddress);
       await this.setTokenCookie(res, refreshToken);
       res.json(account);
     } catch (err) {
@@ -62,7 +62,7 @@ export class AccountController {
   static async getAccountById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const result = await accountService.getById(id);
+      const result = await accountService.getbyId(id);
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);
@@ -80,10 +80,21 @@ export class AccountController {
     }
   }
 
+  
   static async createAccount(req: Request, res: Response) {
     try {
-      const { title, firstName, lastName, email, password, confirmPassword, acceptTerms } = req.body;
-      const result = await accountService.create({ title, firstName, lastName, email, password, confirmPassword, acceptTerms });
+      const {title, firstName, lastName, email, password, confirmPassword, acceptTerms} = req.body;
+      const result = await accountService.create({
+        title,
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        acceptTerms
+      }
+      );
+      
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);
@@ -104,7 +115,8 @@ export class AccountController {
   static async resetPassword(req: Request, res: Response) {
     try {
       const { token, password, confirmPassword } = req.body;
-      const result = await accountService.resetPassword(token, password, confirmPassword);
+      if(password !== confirmPassword) throw new Error("Passwords do not match")
+      const result = await accountService.resetPassword(token, password);
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);

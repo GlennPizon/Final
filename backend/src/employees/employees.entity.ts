@@ -5,7 +5,7 @@ import {
   } from 'typeorm';
   import { Departments } from '../departments/departments.entity';
   import { Accounts } from '../accounts/accounts.entity';
-  import { Workflows } from '../workflows/workflows.entity';
+  import { Workflow } from '../workflows/workflows.entity';
   import { Requests } from '../requests/request.entity';
   
   @Entity()
@@ -31,8 +31,8 @@ import {
     @Column()
     status: string;
   
-    @OneToMany(() => Workflows, wf => wf.employee)
-    workflows: Workflows[];
+    @OneToMany(() => Workflow, wf => wf.employee)
+    workflows: Workflow[];
   
     @OneToMany(() => Requests, req => req.employee)
     requests: Requests[];
