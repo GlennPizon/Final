@@ -233,22 +233,84 @@ export class AccountService {
     return { id, email, title, firstName, lastName, role, created, updated };
   }
 
+  
   async sendVerificationEmail(account: Accounts, origin: string): Promise<void> {
-    const verifyUrl = `${origin}/accounts/verify-email?token=${account.verificationToken}`;
-    const message = `<p>Click to verify your email: <a href="${verifyUrl}">${verifyUrl}</a></p>`;
-    await sendEmail(account.email, "Verify your Email", message, from);
+    let message;
+
+    if(origin){
+      const verifyUrl = `${origin}/accounts/verify-email?token=${account.verificationToken}`;
+      message = `Click to verify your email: <a href="${verifyUrl}">${verifyUrl}</a>
+      <p><code>${account.verificationToken}</code></p>`;
+    }
+
+    else{
+      message = `
+      <p>Please use the below token to verify your email with the <code>/accounts/verify-email</code> api route:</p>
+      <p><code>${account.verificationToken}</code></p>
+      `;
+
+    }
+
+    await sendEmail(
+      account.email,
+      "Sign-Up verification Api-Verify Email",
+      `<h4>Verify your Email</h4>
+      <p>Thank you for registering. Please verify your email address to complete your registration.</p>
+      <p>${message}</p>`,
+      from
+
+    );
+
   }
 
   async sendAlreadyRegisteredEmail(email: string, origin: string): Promise<void> {
-    const message = origin ?
-      `<p>Email already registered. Visit <a href="${origin}">${origin}</a> to login.</p>` :
-      `<p>Email already registered. Please login.</p>`;
-    await sendEmail(email, "Email Already Registered", message, from);
+    let message;
+  
+    if (origin) {
+      message = `
+        If you don't know your password, please use the below token to reset your password with the <code>/accounts/forgot-password</code> api route:
+      `
+    } else {
+      message = `Click to reset your password: <a href="/accounts/forgot-password">Reset Password</a>`;
+    }
+
+    await sendEmail(
+      email,
+      "Sign Up Verification API - Email Already Registered", 
+      `<h4>Email Already Registered</h4>
+      <p>Your ${email} is already registered.}</p>
+      <p>${message}</p>`,
+      from
+    );
+
+
   }
 
-  async sendPasswordResetEmail(account: Accounts, origin: string): Promise<void> {
-    const resetUrl = `${origin}/accounts/reset-password?token=${account.resetToken}`;
-    const message = `<p>Click to reset your password: <a href="${resetUrl}">${resetUrl}</a></p>`;
-    await sendEmail(account.email, "Reset Your Password", message, from);
-  }
+    async sendPasswordResetEmail(account: Accounts, origin: string): Promise<void> {
+      let message;
+
+      if (origin) {
+        const resetUrl = `${origin}/reset-password?token=${account.resetToken}`;
+        message = `Click to reset your password: the link below is valid for 1 hour: <br>
+                  <a href="${resetUrl}">${resetUrl}</a>`;
+
+      }
+
+      else {
+        message = `Click to reset your password: with the <code>/reset-password</code> api route: <br>
+                  <p>Use the below token to reset your password:</p>
+                  <p><code>${account.resetToken}</code></p>`
+        
+      }
+
+      await sendEmail(
+        account.email,
+        "Sign Up Verification API - Password Reset",
+        `<h4>Password Reset Email</h4>
+        <p>${message}</p>`,
+        from
+      );
+    }  
+
+
 }

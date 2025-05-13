@@ -103,16 +103,15 @@ export class AccountController {
   }
 
   static async forgotPassword(req: Request, res: Response) {
-    try {
-      const { email } = req.body;
-      const origin: string = req.get("origin");
-      console.log(origin);
-      const result = await accountService.forgotPassword(req.body.email, origin);
-      res.json(result);
-    } catch (err) {
-      res.status(StatusCodes.BAD_REQUEST).json(err);
+      try {
+        const { email } = req.body;
+        const origin: string = `http://localhost:${process.env.APP_PORT}`;
+        const result = await accountService.forgotPassword(email, origin);
+        res.json(result);
+      } catch (err) {
+        res.status(StatusCodes.BAD_REQUEST).json(err);
+      }
     }
-  }
 
   static async resetPassword(req: Request, res: Response) {
     try {
