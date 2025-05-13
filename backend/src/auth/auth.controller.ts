@@ -41,4 +41,16 @@ export class AuthController {
       res.status(400).json({ message: err.message });
     }
   }
+
+  static async logout(req: Request, res: Response) {
+    const { token } = req.body;
+    const ip = req.ip;
+
+    try {
+      await authService.logout(token, ip);
+      res.json({ message: 'Logged out' });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
 }
