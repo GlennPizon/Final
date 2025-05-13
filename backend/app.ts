@@ -7,7 +7,6 @@ import cookieParser from 'cookie-parser';
 import initialize from './data-source';
 import { errorHandler } from './src/middleware/error-handler';
 import swaggerRouter from './src/utils/swagger';
-
 import accountRoutes from './src/accounts/accounts.routes';
 import authRoutes from './src/auth/auth.routes';
 import employeeRoutes from './src/employees/employees.routes';
