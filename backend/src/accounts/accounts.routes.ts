@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AccountController } from './accounts.controller';
 import { validate } from '../middleware/validate-request';
-import { registerSchema, authenticateSchema, verifyEmailSchema, forgotPasswordSchema, validateResetTokenSchema, resetPasswordSchema } from './accounts.schema';
+import { registerSchema, authenticateSchema, verifyEmailSchema, forgotPasswordSchema, validateResetTokenSchema, resetPasswordSchema , updateAccountSchema} from './accounts.schema';
 import { authorize } from '../middleware/authorize';
 import { Role } from '../utils/role';
 
@@ -17,7 +17,7 @@ router.post('/refresh-token', AccountController.refreshToken); // Refresh JWT to
 router.post('/revoke-token', authorize(),AccountController.revokeToken); // Revoke refresh token
 router.get('/', authorize([Role.Admin]),AccountController.getAllAccounts); // Get all accounts
 router.get('/:id',authorize() , AccountController.getAccountById); // Get single account
-router.put('/:id', authorize(),AccountController.updateAccount); // Update account
+router.put('/:id', authorize([Role.Admin, Role.User]), validate(updateAccountSchema),AccountController.updateAccount); // Update account
 router.delete('/:id', authorize([Role.Admin]),AccountController.deleteAccount); // Delete account
 
 export default router;

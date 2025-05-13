@@ -59,5 +59,9 @@ import {
   
     @UpdateDateColumn()
     updated: Date;
+
+    get isVerified(): boolean {
+    return !!this.verified || !!this.passwordReset;
+  }
   }
   

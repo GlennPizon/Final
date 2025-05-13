@@ -32,7 +32,7 @@ export class AccountController {
   static async authenticate(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
-      const ipAddress: any = req.ip;
+      const ipAddress: string = req.ip;
       const { refreshToken, ...account } = await accountService.authenticate( {email, password}, ipAddress);
       await this.setTokenCookie(res, refreshToken);
       res.json(account);

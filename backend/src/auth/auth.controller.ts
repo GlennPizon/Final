@@ -8,7 +8,7 @@ const authService = new AuthService();
 export class AuthController {
   static async login(req: Request, res: Response) {
     const { email, password } = req.body;
-    const ip = req.ip;
+    const ip = req.ip || '127.0.0.1';
 
     try {
       const result = await authService.login(email, password, ip);

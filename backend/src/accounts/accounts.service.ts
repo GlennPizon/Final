@@ -172,7 +172,6 @@ export class AccountService {
     const account = await this.validateResetToken(token);
     account.passwordHash = await bcrypt.hash(password, 10);
     account.passwordReset = new Date();
-    account.resetToken = null;
     await this.userRepo.save(account);
     return { message: "Password reset successful" };
   }
@@ -187,7 +186,7 @@ export class AccountService {
     return this.basicDetails(account);
   }
 
-  async update(id: string, params: { email?: string; password?: string }) {
+  async update(id: string, params: { email?: string; password?: string },userRole:string) {
     const account = await this.userRepo.findOneBy({ id });
     if (!account) throw new Error("Account not found");
     if (params.email && params.email !== account.email && await this.userRepo.findOneBy({ email: params.email })) {
@@ -290,14 +289,14 @@ export class AccountService {
       let message;
 
       if (origin) {
-        const resetUrl = `${origin}/reset-password?token=${account.resetToken}`;
+        const resetUrl = `${origin}/accounts/reset-password?token=${account.resetToken}`;
         message = `Click to reset your password: the link below is valid for 1 hour: <br>
                   <a href="${resetUrl}">${resetUrl}</a>`;
 
       }
 
       else {
-        message = `Click to reset your password: with the <code>/reset-password</code> api route: <br>
+        message = `Click to reset your password: with the <code>/accounts/reset-password</code> api route: <br>
                   <p>Use the below token to reset your password:</p>
                   <p><code>${account.resetToken}</code></p>`
         

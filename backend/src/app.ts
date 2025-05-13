@@ -46,11 +46,11 @@ app.use(swaggerRouter);
 // 🔹 Initialize DB and Start Server
 async function start() {
   
-
+/*
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     errorHandler(err, req, res, next);
   });
-
+*/
   await initialize();
 
   app.listen(PORT, () => {
