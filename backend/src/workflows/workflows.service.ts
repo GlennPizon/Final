@@ -1,29 +1,35 @@
-import { AppDataSource } from '../data-source';
+// src/workflows/workflow.service.ts
+import { AppDataSource } from '../../data-source';
 import { Workflows } from './workflows.entity';
+import { Employees } from '../employees/employees.entity';
+import { Repository } from 'typeorm';
 
 export class WorkflowService {
-  private workflowRepo = AppDataSource.getRepository(Workflows);
+  private workflowRepo: Repository<Workflows> = AppDataSource.getRepository(Workflows);
+  private employeeRepo: Repository<Employees> = AppDataSource.getRepository(Employees);
 
-  async create({ employeeId, type, details }) {
-    const newWorkflow = this.workflowRepo.create({ employeeId, type, details });
-    await this.workflowRepo.save(newWorkflow);
-    return newWorkflow;
+  async create(data: any) {
+    const workflow = this.workflowRepo.create(data);
+    return this.workflowRepo.save(workflow);
   }
 
-  async getAll() {
-    return this.workflowRepo.find();
+  async findByEmployeeId(employeeId: string) {
+    return this.workflowRepo.find({ where: { employee: { id: employeeId } }, relations: ['employee'] });
   }
 
-  async getById(id: string) {
-    return this.workflowRepo.findOne({ where: { id } });
+  async onboard(data: any) {
+    const onboardingWorkflow = this.workflowRepo.create({
+      ...data,
+      type: 'Onboarding',
+      status: 'Pending',
+    });
+    return this.workflowRepo.save(onboardingWorkflow);
   }
 
   async updateStatus(id: string, status: string) {
-    const workflow = await this.workflowRepo.findOne({ where: { id } });
+    const workflow = await this.workflowRepo.findOneBy({ id });
     if (!workflow) throw new Error('Workflow not found');
-
     workflow.status = status;
-    await this.workflowRepo.save(workflow);
-    return workflow;
+    return this.workflowRepo.save(workflow);
   }
 }
