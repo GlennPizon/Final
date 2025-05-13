@@ -62,7 +62,8 @@ export class AccountService {
     account.verified = new Date();
     account.verificationToken = null;
     await this.userRepo.save(account);
-    return { message: "Email verified successfully" };
+    
+    return { message: "Email verified successfully, you can now login" };
   }
 
   async create(params: any): Promise<Pick<Accounts, 'id' | 'email' | 'title' | 'firstName' | 'lastName' | 'role' | 'created' | 'updated'>> {
@@ -155,7 +156,7 @@ export class AccountService {
     const account = await this.userRepo.findOneBy({ email });
     if (!account) throw new Error("Email not found");
     account.resetToken = await this.randomTokenString();
-    account.resetTokenExpires = new Date(Date.now() + 3600000);
+    account.resetTokenExpires = new Date(Date.now() + 3600000); 
     await this.userRepo.save(account);
     await this.sendPasswordResetEmail(account, origin);
     return { message: "Password reset email sent" };
@@ -233,7 +234,7 @@ export class AccountService {
   }
 
   async sendVerificationEmail(account: Accounts, origin: string): Promise<void> {
-    const verifyUrl = `${origin}/verify-email?token=${account.verificationToken}`;
+    const verifyUrl = `${origin}/accounts/verify-email?token=${account.verificationToken}`;
     const message = `<p>Click to verify your email: <a href="${verifyUrl}">${verifyUrl}</a></p>`;
     await sendEmail(account.email, "Verify your Email", message, from);
   }
@@ -246,7 +247,7 @@ export class AccountService {
   }
 
   async sendPasswordResetEmail(account: Accounts, origin: string): Promise<void> {
-    const resetUrl = `${origin}/reset-password?token=${account.resetToken}`;
+    const resetUrl = `${origin}/accounts/reset-password?token=${account.resetToken}`;
     const message = `<p>Click to reset your password: <a href="${resetUrl}">${resetUrl}</a></p>`;
     await sendEmail(account.email, "Reset Your Password", message, from);
   }

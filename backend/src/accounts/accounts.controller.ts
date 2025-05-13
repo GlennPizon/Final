@@ -22,6 +22,7 @@ export class AccountController {
     try {
       const { token } = req.query;
       const result = await accountService.verifyEmail(token as string);
+
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ msg: `Invalid email or not verified` });
@@ -104,8 +105,9 @@ export class AccountController {
   static async forgotPassword(req: Request, res: Response) {
     try {
       const { email } = req.body;
-      const origin: string = req.get("origin") || "";
-      const result = await accountService.forgotPassword(email, origin);
+      const origin: string = req.get("origin");
+      console.log(origin);
+      const result = await accountService.forgotPassword(req.body.email, origin);
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);
