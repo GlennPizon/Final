@@ -72,5 +72,11 @@ export class AuthService {
     refresh.revokedByIp = ip;
     await this.refreshTokenRepo.save(refresh);
   }
+
+  async logout(token: string, ip: string) {
+    await this.revoke(token, ip);
+    return { message: 'Logged out' };
+  }
+
   
 }
