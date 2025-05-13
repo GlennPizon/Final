@@ -4,16 +4,16 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import initialize from './data-source';
-import { errorHandler } from './src/middleware/error-handler';
-import swaggerRouter from './src/utils/swagger';
+import {initialize} from './data-source';
+import { errorHandler } from './middleware/error-handler';
+import swaggerRouter from './utils/swagger';
 
-import accountRoutes from './src/accounts/accounts.routes';
-import authRoutes from './src/auth/auth.routes';
-import employeeRoutes from './src/employees/employees.routes';
-import departmentRoutes from './src/departments/departments.routes';
-import workflowRoutes from './src/workflows/workflows.routes';
-import requestRoutes from './src/requests/requests.routes';
+import accountRoutes from './accounts/accounts.routes';
+import authRoutes from './auth/auth.routes';
+import employeeRoutes from './employees/employees.routes';
+import departmentRoutes from './departments/departments.routes';
+import workflowRoutes from './workflows/workflows.routes';
+import requestRoutes from './requests/requests.routes';
 
 dotenv.config();
 
@@ -40,20 +40,18 @@ app.use('/workflows', workflowRoutes);
 app.use('/requests', requestRoutes);
 app.use(swaggerRouter);
 
-// Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  errorHandler(err, req, res, next);
-});
 
 
 
 // 🔹 Initialize DB and Start Server
 async function start() {
-  await initialize();
+  
 
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     errorHandler(err, req, res, next);
   });
+
+  await initialize();
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

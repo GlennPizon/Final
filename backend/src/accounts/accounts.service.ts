@@ -1,5 +1,5 @@
 // src/accounts/account.service.ts
-import AppDataSource from "../data-source";
+import {AppDataSource} from "../data-source";
 import { Accounts } from "../accounts/accounts.entity";
 import { RefreshToken } from "../auth/refresh-token.entity";
 import bcrypt from "bcryptjs";

@@ -1,8 +1,8 @@
-// src/data-source.ts
-import { DataSource } from 'typeorm';
-import dotenv from 'dotenv';
-import 'reflect-metadata'
-import mysql from 'mysql2/promise';
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
+
 import { Accounts } from './accounts/accounts.entity';
 import { RefreshToken } from './auth/refresh-token.entity';
 import { Employees } from './employees/employees.entity';
@@ -13,6 +13,7 @@ import { RequestItem } from './requests/request-item.entity';
 
 
 dotenv.config();
+
 // ✅ Load environment variables safely
 const dbhost: string = process.env.DB_HOST;
 const dbport: number = parseInt(process.env.DB_PORT); // 🔹 Ensure port is a number
@@ -20,36 +21,28 @@ const dbuser: string = process.env.DB_USER ;
 const dbpassword: string = process.env.DB_PASS;
 const dbname: string = process.env.DB_NAME;
 
-const connectionOptions = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    port: parseInt(process.env.DB_PORT || '3306'),
-};
-
-
+// ✅ Define TypeORM DataSource
 export const AppDataSource = new DataSource({
-  type: 'mysql',
-  host: dbhost,
-  port: dbport,
-  username: dbuser,
-  password: dbpassword,
-  database: dbname,
-  synchronize: true,
-  logging: false,
-  entities: [
-    Accounts,
-    RefreshToken,
-    Employees,
-    Departments,
-    Workflow,
-    Requests,
-    RequestItem
-  ],
-  migrations: [],
-  subscribers: []
+    type: "mysql",
+    host: dbhost,
+    port: dbport,
+    username: dbuser,
+    password: dbpassword,
+    database: dbname,
+    synchronize: true, // 🔹 Auto-create tables
+    logging: false,
+    entities: [Accounts, RefreshToken, Employees, Departments, Workflow, Requests, RequestItem],
+    migrations: [],
+    subscribers: [],
 });
 
+// ✅ MySQL Connection Options for Database Creation
+const connectionOptions = {
+    host: dbhost,
+    port: dbport,
+    user: dbuser,
+    password: dbpassword,
+};
 
 // ✅ Function to Check If Database Exists
 async function checkDatabaseExists(): Promise<boolean> {
@@ -72,7 +65,7 @@ async function createDatabase() {
         const connection = await mysql.createConnection(connectionOptions);
         if (await checkDatabaseExists()) {
             console.log(`Database "${dbname}" already exists.`);
-            return
+            return;
         } 
         
             await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbname}\`;`);
