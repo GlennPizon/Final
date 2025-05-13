@@ -13,6 +13,8 @@
       "outDir": "./dist",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "sourceMap": true
+      "sourceMap": true,
+      "forceConsistentCasingInFileNames": true,
+      
    }
 }
