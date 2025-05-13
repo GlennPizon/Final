@@ -19,6 +19,7 @@ export class AuthService {
     const jwtToken = generateJwtToken({ id: user.id, role: user.role });
     const refreshToken = await this.createRefreshToken(user, ip);
 
+
     return {
       ...user,
       jwtToken,
@@ -38,7 +39,7 @@ export class AuthService {
     return token;
   }
 
-  async refresh(token: string, ip: string) {
+  async   refresh(token: string, ip: string) {
     const existing = await this.refreshTokenRepo.findOne({
       where: { token },
       relations: ['account']

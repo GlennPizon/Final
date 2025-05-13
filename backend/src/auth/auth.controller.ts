@@ -44,7 +44,7 @@ export class AuthController {
 
   static async logout(req: Request, res: Response) {
     const { token } = req.body;
-    const ip = req.ip;
+    const ip = req.ip|| '127.0.0.1';
 
     try {
       await authService.logout(token, ip);

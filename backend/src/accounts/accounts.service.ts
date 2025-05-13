@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import { Role } from "../utils/role";
 import { MoreThan } from "typeorm";
 import { Repository } from "typeorm";
+import { generateJwtToken } from "../auth/jwt.utils"; 
 
 dotenv.config();
 
@@ -121,28 +122,87 @@ export class AccountService {
 
 
 
-  async authenticate({ email, password }, ipAddress: string): Promise<any> {
-    const user = await this.userRepo.findOneBy({ email });
-    if (!user || !user.verified) throw new Error("Invalid email or password");
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) throw new Error("Invalid email or password");
-    const refreshToken = await this.generateRefreshToken(user, ipAddress);
-    await this.refreshTokenRepo.save(refreshToken);
-    const jwtToken = this.generateJwtToken(user);
-    return { ...this.basicDetails(user), jwtToken, refreshToken: refreshToken.token };
-  }
+ async authenticate(email: string, password: string, ip: string) {
+     const user = await this.userRepo.findOne({ where: { email }, select: ['id', 'email', 'passwordHash', 'role'] });
+     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+       throw new Error('Invalid email or password');
+     }
+ 
+     const jwtToken = generateJwtToken({ id: user.id, role: user.role });
+     const refreshToken = await this.createRefreshToken(user, ip);
+     
+ 
+     return {
+       ...user,
+
+       jwtToken,
+       refreshToken: refreshToken.token
+     };
+   }
+ 
+   async createRefreshToken(user: Accounts, ip: string): Promise<RefreshToken> {
+     const token = new RefreshToken();
+     token.token = crypto.randomUUID();
+     token.account = user;
+     token.created = new Date();
+     token.expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+     token.createdByIp = ip;
+ 
+     await this.refreshTokenRepo.save(token);
+     return token;
+   }
+ 
+   async refresh(token: string, ip: string) {
+     const existing = await this.refreshTokenRepo.findOne({
+       where: { token },
+       relations: ['account']
+     });
+ 
+     if (!existing || !existing.isActive) {
+       throw new Error('Invalid or expired refresh token');
+     }
+ 
+     const newToken = await this.createRefreshToken(existing.account, ip);
+     existing.revoked = new Date();
+     existing.revokedByIp = ip;
+     existing.replacedByToken = newToken.token;
+     await this.refreshTokenRepo.save(existing);
+ 
+     const jwtToken = generateJwtToken({ id: existing.account.id, role: existing.account.role });
+ 
+     return {
+       jwtToken,
+       refreshToken: newToken.token
+     };
+   }
 
   async refreshToken(token: string, ipAddress: string): Promise<any> {
+    // 🚀 Validate refresh token existence
     const refreshToken = await this.refreshTokenRepo.findOne({ where: { token }, relations: ["account"] });
-    if (!refreshToken || !refreshToken.isActive) throw new Error("Invalid refresh token");
+
+    if (!refreshToken || !refreshToken.isActive) {
+        throw new Error("Unauthorized: Invalid or expired refresh token");
+    }
+
     const account = refreshToken.account;
+
+    // 🚀 Rotate the refresh token
     const newRefreshToken = await this.generateRefreshToken(account, ipAddress);
     refreshToken.revoked = new Date();
     refreshToken.revokedByIp = ipAddress;
+
     await this.refreshTokenRepo.save([refreshToken, newRefreshToken]);
+
+    // 🚀 Generate new JWT token
     const jwtToken = this.generateJwtToken(account);
-    return { ...this.basicDetails(account), jwtToken, refreshToken: newRefreshToken.token };
-  }
+
+    return {
+        ...this.basicDetails(account),
+        jwtToken,
+        refreshToken: newRefreshToken.token,
+    };
+}
+
 
   async revokeToken(token: string, ipAddress: string): Promise<void> {
     const refreshToken = await this.refreshTokenRepo.findOneBy({ token });
@@ -178,7 +238,7 @@ export class AccountService {
 
   async getAll() {
     const accounts = await this.userRepo.find();
-    return accounts.map(x => this.basicDetails(x));
+    return accounts.map((account) => this.basicDetails(account));
   }
 
   async getbyId(id: string) {
@@ -214,20 +274,27 @@ export class AccountService {
   }
 
   async generateRefreshToken(account: Accounts, ipAddress: string): Promise<RefreshToken> {
+    const tokenString = await this.randomTokenString();
+
     const token = new RefreshToken();
-    token.token = await this.randomTokenString();
-    token.expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    token.token = tokenString;
+    token.expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days expiration
     token.created = new Date();
     token.createdByIp = ipAddress;
     token.account = account;
+
+    // 🚀 Save refresh token in database for future validation
+    await this.refreshTokenRepo.save(token);
+
     return token;
-  }
+}
+
 
   async randomTokenString(): Promise<string> {
     return random();
   }
 
-  async basicDetails(account: Accounts) {
+   basicDetails(account: Accounts) {
     const { id, title, firstName, lastName, email, role, created, updated } = account;
     return { id, email, title, firstName, lastName, role, created, updated };
   }

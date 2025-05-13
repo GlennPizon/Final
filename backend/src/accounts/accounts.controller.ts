@@ -1,7 +1,8 @@
 // src/accounts/account.controller.ts
-import { Request, Response } from "express";
+import { CookieOptions, Request, Response } from "express";
 import { AccountService } from "./accounts.service";
 import { StatusCodes } from "http-status-codes";
+import { generateJwtToken } from "../auth/jwt.utils";
 
 const accountService = new AccountService();
 
@@ -30,16 +31,17 @@ export class AccountController {
   }
 
   static async authenticate(req: Request, res: Response) {
-    try {
       const { email, password } = req.body;
-      const ipAddress: string = req.ip;
-      const { refreshToken, ...account } = await accountService.authenticate( {email, password}, ipAddress);
-      await this.setTokenCookie(res, refreshToken);
-      res.json(account);
-    } catch (err) {
-      res.status(StatusCodes.UNAUTHORIZED).json({ msg: `Invalid email or password` });
+      const ip:string = req.ip || '127.0.0.1';
+  
+      try {
+        const result = await accountService.authenticate(email, password, ip);
+
+        res.json(result);
+      } catch (err) {
+        res.status(401).json({ message: err.message });
+      }
     }
-  }
 
   static async deleteAccount(req: Request, res: Response) {
     try {
@@ -69,19 +71,21 @@ export class AccountController {
       res.status(StatusCodes.BAD_REQUEST).json(err);
     }
   }
-
+/*
   static async updateAccount(req: Request, res: Response) {
     try {
       const { id } = req.params;
       const { email, password } = req.body;
-      const result = await accountService.update(id, { email, password });
+      const userRole = req.user.role;
+
+      const result = await accountService.update(id, { email, password }, userRole );
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);
     }
   }
 
-  
+  */
   static async createAccount(req: Request, res: Response) {
     try {
       const {title, firstName, lastName, email, password, confirmPassword, acceptTerms} = req.body;
@@ -126,8 +130,12 @@ export class AccountController {
 
   static async refreshToken(req: Request, res: Response) {
     try {
-      const token = req.cookies.refreshToken;
-      const ipAddress:any = req.ip;
+      const token = req.cookies?.refreshToken;
+      const ipAddress:any = req.ip|| '127.0.0.1';
+      if (!token) {
+        return res.status(401).json({ message: "Unauthorized: No refresh token provided" });
+      }
+
       const result = await accountService.refreshToken(token, ipAddress);
       res.json(result);
     } catch (err) {
@@ -157,10 +165,15 @@ export class AccountController {
   }
 
   static async setTokenCookie(res: Response, token: string): Promise<void> {
-    const cookieOptions = {
-      httpOnly: true,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    };
-    res.cookie("refreshToken", token, cookieOptions);
-  }
+  const cookieOptions: CookieOptions = {
+    httpOnly: true, // Prevents client-side JavaScript access
+    secure: process.env.NODE_ENV === "production", // HTTPS-only in production
+    sameSite: "strict", // Protects against CSRF attacks
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7-day expiration
+  };
+
+  console.log("Setting Refresh Token Cookie:", token); // Debugging step
+  res.cookie("refreshToken", token, cookieOptions);
+}
+
 }

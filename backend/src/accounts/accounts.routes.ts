@@ -13,11 +13,11 @@ router.post('/authenticate', validate(authenticateSchema),AccountController.auth
 router.post('/forgot-password',validate(forgotPasswordSchema), AccountController.forgotPassword); // Forgot password
 router.post('/validate-reset-token', validate(validateResetTokenSchema),AccountController.validateResetToken); // Validate reset token
 router.post('/reset-password', validate(resetPasswordSchema),AccountController.resetPassword)
-router.post('/refresh-token', AccountController.refreshToken); // Refresh JWT token
+//router.post('/refresh-token', AccountController.refreshToken); // Refresh JWT token
 router.post('/revoke-token', authorize(),AccountController.revokeToken); // Revoke refresh token
 router.get('/', authorize([Role.Admin]),AccountController.getAllAccounts); // Get all accounts
 router.get('/:id',authorize() , AccountController.getAccountById); // Get single account
-router.put('/:id', authorize([Role.Admin, Role.User]), validate(updateAccountSchema),AccountController.updateAccount); // Update account
+//router.put('/:id', authorize([Role.Admin, Role.User]), validate(updateAccountSchema),AccountController.updateAccount); // Update account
 router.delete('/:id', authorize([Role.Admin]),AccountController.deleteAccount); // Delete account
 
 export default router;
