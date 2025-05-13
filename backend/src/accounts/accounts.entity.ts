@@ -5,7 +5,7 @@ import {
   } from 'typeorm';
   import { RefreshToken } from '../auth/refresh-token.entity';
   import { Employees } from '../employees/employees.entity';
-  import { Role } from '../utils/Role';
+  import { Role } from '../utils/role';
   
   @Entity()
   export class Accounts {
