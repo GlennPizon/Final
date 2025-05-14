@@ -61,7 +61,7 @@ export class EmployeeService {
   }
 
   
-   async transfer(employeeId: string, newDepartmentId: string, adminId: string) {
+   async transfer(employeeId: string, newDepartmentId: string) {
     // 🚀 Find employee to transfer
     const employee = await this.repo.findOne({ where: { id: employeeId }, relations: ["department"] });
     if (!employee) throw new Error("Employee not found");
@@ -75,7 +75,7 @@ export class EmployeeService {
 
     await this.repo.save(employee);
 
-    return { employeeId, newDepartmentId, transferredBy: adminId };
+    return { employeeId, newDepartmentId};
   }
 
 }

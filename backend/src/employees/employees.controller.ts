@@ -2,7 +2,6 @@
 import { Request, Response } from 'express';
 import { EmployeeService } from './employees.service';
 import { StatusCodes } from 'http-status-codes';
-import { RequestWithUser } from '../types/request-with-user'
 
 const service = new EmployeeService();
 
@@ -52,9 +51,8 @@ export class EmployeeController {
     try {
       const { id } = req.params;
       const { newDepartmentId } = req.body;
-      const adminId = req.user.id// Admin performing the transfer
 
-      const result = await service.transfer(id, newDepartmentId, adminId);
+      const result = await service.transfer(id, newDepartmentId);
       res.status(StatusCodes.OK).json({ message: "Employee transferred successfully", data: result });
     } catch (err: any) {
         res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
