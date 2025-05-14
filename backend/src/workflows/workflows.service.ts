@@ -1,5 +1,3 @@
-
-// src/workflows/workflows.service.ts
 import { AppDataSource } from '../data-source';
 import { Workflow } from '../workflows/workflows.entity';
 import { Employees } from '../employees/employees.entity';
@@ -13,9 +11,24 @@ export class WorkflowService {
     if (!employee) throw new Error('Employee not found');
 
     const workflow = this.workflowRepo.create({
-      ...data,
+      type: data.type,
       status: 'Pending',
-      employee,
+      details: data.details,
+      employee
+    });
+
+    return this.workflowRepo.save(workflow);
+  }
+
+  async onboarding(data: { employeeId: string; details: any }) {
+    const employee = await this.employeeRepo.findOneBy({ id: data.employeeId });
+    if (!employee) throw new Error('Employee not found');
+
+    const workflow = this.workflowRepo.create({
+      type: 'Onboarding',
+      status: 'Pending',
+      details: data.details,
+      employee
     });
 
     return this.workflowRepo.save(workflow);
@@ -24,31 +37,18 @@ export class WorkflowService {
   async findByEmployeeId(employeeId: string) {
     return this.workflowRepo.find({
       where: { employee: { id: employeeId } },
-      relations: ['employee'],
+      relations: ['employee']
     });
   }
 
-  async onboarding(data: { employeeId: string; details: any }) {
-    const employee = await this.employeeRepo.findOneBy({ id: data.employeeId });
-    if (!employee) throw new Error('Employee not found');
-
-    const workflow = this.workflowRepo.create({
-      employee,
-      type: 'Onboarding',
-      status: 'Pending',
-      details: data.details,
-    });
-
-    return this.workflowRepo.save(workflow);
-  }
-
-  async updateStatus(id: string, status: 'Pending' | 'Approved' | 'Rejected') {
+  async updateStatus(id: string, status: string) {
     const workflow = await this.workflowRepo.findOneBy({ id });
     if (!workflow) throw new Error('Workflow not found');
 
-    workflow.status = status;
+    const allowedStatuses = ['Pending', 'Approved', 'Rejected'];
+    if (!allowedStatuses.includes(status)) throw new Error('Invalid status');
+
+    workflow.status = status as 'Pending' | 'Approved' | 'Rejected';
     return this.workflowRepo.save(workflow);
   }
-  
-
 }
