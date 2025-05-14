@@ -13,8 +13,8 @@ import {
     @PrimaryGeneratedColumn('uuid')
     id: string;
   
-    @Column({ unique: true })
-    employeeId: string;
+    @Column({type: 'varchar', unique: true })
+    employeeId: any;
   
     @ManyToOne(() => Accounts, account => account.employees)
     account: Accounts;
