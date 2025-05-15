@@ -11,6 +11,7 @@ import { Role } from "../utils/role";
 import { MoreThan } from "typeorm";
 import { Repository } from "typeorm";
 import { generateJwtToken } from "../auth/jwt.utils"; 
+import {UpdateAccountInput } from '../types/accounts'
 
 dotenv.config();
 
@@ -246,20 +247,57 @@ export class AccountService {
     return this.basicDetails(account);
   }
 
-  async update(id: string, params: { email?: string; password?: string },userRole:string) {
-    const account = await this.userRepo.findOneBy({ id });
-    if (!account) throw new Error("Account not found");
-    if (params.email && params.email !== account.email && await this.userRepo.findOneBy({ email: params.email })) {
-      throw new Error("Email already exists");
-    }
-    if (params.password) {
-      account.passwordHash = await bcrypt.hash(params.password, 10);
-    }
-    Object.assign(account, params);
-    account.updated = new Date();
-    await this.userRepo.save(account);
-    return this.basicDetails(account);
+  async update(
+  id: string,
+  params: UpdateAccountInput,
+  userRole: Role.Admin | Role.User
+): Promise<Partial<Accounts>>{
+  const account = await this.userRepo.findOneBy({ id });
+  if (!account) throw new Error("Account not found");
+
+  
+  
+  if (userRole !== Role.Admin) {
+    const allowedFields = ['title', 'firstName', 'lastName', 'password', 'confirmPassword'];
+    Object.keys(params).forEach((key) => {
+      if (!allowedFields.includes(key)) {
+        delete params[key as keyof UpdateAccountInput];
+      }
+    });
   }
+ 
+
+  // Email change check
+  if (params.email && params.email !== account.email) {
+    const emailExists = await this.userRepo.findOneBy({ email: params.email });
+    if (emailExists) throw new Error("Email already in use");
+    account.email = params.email;
+  }
+
+  // Password update
+  if (params.password) {
+    if (!params.password || params.password !== params.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+    const salt = await bcrypt.genSalt(10);
+    account.passwordHash = await bcrypt.hash(params.password, salt);
+  }
+
+  if (params.firstName) account.firstName = params.firstName;
+  if (params.lastName) account.lastName = params.lastName;
+  if (params.title) account.title = params.title;
+
+  if (userRole === 'Admin') {
+    if (params.role) account.role = Role[params.role as keyof typeof Role];
+    if (params.acceptTerms !== undefined) account.acceptTerms = params.acceptTerms;
+  }
+
+  account.updated = new Date();
+  await this.userRepo.save(account);
+
+  return this.basicDetails(account);
+}
+
 
   async delete(id: string) {
     const account = await this.userRepo.findOneBy({ id });

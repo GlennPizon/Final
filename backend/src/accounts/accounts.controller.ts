@@ -3,6 +3,7 @@ import { CookieOptions, Request, Response } from "express";
 import { AccountService } from "./accounts.service";
 import { StatusCodes } from "http-status-codes";
 import { generateJwtToken } from "../auth/jwt.utils";
+import Role from "../utils/role";
 
 const accountService = new AccountService();
 
@@ -10,7 +11,10 @@ export class AccountController {
   static async register(req: Request, res: Response) {
     try {
       const { email, password, confirmPassword, firstname, lastname, title, acceptTerms } = req.body;
-      const origin: string = req.headers.origin || `http://localhost:${process.env.APP_PORT}`;
+      if(password !== confirmPassword) throw new Error("Passwords do not match")
+      
+      const origin: string = req.get("origin") || `http://localhost:${process.env.APP_PORT}`;
+      
       const result = await accountService.register({ email, password, confirmPassword, firstname, lastname, title, acceptTerms }, origin);
       res.status(StatusCodes.CREATED).json(result); 
     } catch (err: any) {
@@ -31,17 +35,23 @@ export class AccountController {
   }
 
   static async authenticate(req: Request, res: Response) {
-      const { email, password } = req.body;
-      const ip:string = req.ip || '127.0.0.1';
-  
-      try {
-        const result = await accountService.authenticate(email, password, ip);
+  const { email, password } = req.body;
+  const ip: string = req.ip || '127.0.0.1';
 
-        res.json(result);
-      } catch (err) {
-        res.status(401).json({ message: err.message });
-      }
-    }
+  try {
+    const result = await accountService.authenticate(email, password, ip);
+
+    // Set the refresh token as cookie
+    await AccountController.setTokenCookie(res, result.refreshToken);
+
+    // Don't expose refreshToken in the body
+    const { refreshToken, ...account } = result;
+    res.json(account);
+  } catch (err) {
+    res.status(401).json({ message: err.message });
+  }
+}
+
 
   static async deleteAccount(req: Request, res: Response) {
     try {
@@ -71,21 +81,22 @@ export class AccountController {
       res.status(StatusCodes.BAD_REQUEST).json(err);
     }
   }
-/*
+
   static async updateAccount(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const { email, password } = req.body;
-      const userRole = req.user.role;
+  try {
+    const { id } = req.params;
+    const userRole = (req.user as any)?.role; // depends on your JWT middleware
+    const updateFields = req.body;
 
-      const result = await accountService.update(id, { email, password }, userRole );
-      res.json(result);
-    } catch (err) {
-      res.status(StatusCodes.BAD_REQUEST).json(err);
-    }
+    const result = await accountService.update(id, updateFields, userRole);
+    res.json(result);
+  } catch (err: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: err.message });
   }
+}
 
-  */
+
+  
   static async createAccount(req: Request, res: Response) {
     try {
       const {title, firstName, lastName, email, password, confirmPassword, acceptTerms} = req.body;
@@ -130,23 +141,23 @@ export class AccountController {
 
   static async refreshToken(req: Request, res: Response) {
     try {
-      const token = req.cookies.refreshToken;
+      const token = req.body.token || req.cookies.refreshToken;
+      const refresh = token;
+      if(!refresh){throw new Error("Invalid refresh token")}
+      
       const ipAddress:any = req.ip|| '127.0.0.1';
 
-      console.log("Cookies from Request:", req.cookies);
-      console.log("Refresh Token from Cookies:", req.cookies?.refreshToken);
-      console.log("IP Address:", ipAddress);
+      const result = await accountService.refresh(refresh, ipAddress);
+      await AccountController.setTokenCookie(res, result.refreshToken);
 
-      if (!token) {
-        return res.status(401).json({ message: "Unauthorized: No refresh token provided" });
-      }
-
-      const result = await accountService.refreshToken(token, ipAddress);
-      res.json(result);
+      const {  refreshToken, ...account } = result;
+      
+      res.json(account);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json(err);
     }
   }
+
 
   static async revokeToken(req: Request, res: Response) {
     try {

@@ -37,15 +37,16 @@ export const resetPasswordSchema = Joi.object({
 export const createAccountSchema = registerSchema;
 
 export const updateAccountSchema = Joi.object({
-
-  title: Joi.string().empty(''),
-  firstName: Joi.string().empty(''),
-  lastName: Joi.string().empty(''),
-  email: Joi.string().email().empty(''),
-  password: Joi.string().min(6).empty(''),
-  confirmPassword: Joi.string().valid(Joi.ref('password')).empty(''),
-  role: Joi.string().valid('User','Admin').forbidden()
+  title: Joi.string().optional(),
+  firstName: Joi.string().optional(),
+  lastName: Joi.string().optional(),
+  email: Joi.string().email().optional(),
+  password: Joi.string().min(6).optional(),
+  confirmPassword: Joi.string().valid(Joi.ref('password')).optional(),
+  role: Joi.string().valid('Admin', 'User').optional(), // Only Admin should be allowed to send this
+  acceptTerms: Joi.boolean().optional()
 });
+
 
 export const deleteAccountSchema = Joi.object({
   id: Joi.string().required()

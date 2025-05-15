@@ -33,6 +33,7 @@ export const authorize = (roles: Role[] | Role = []) => {
 
     if (!token) {
        res.status(401).json({ message: "Unauthorized: No token provided" });
+       return;
     }
 
     try {
@@ -40,11 +41,13 @@ export const authorize = (roles: Role[] | Role = []) => {
 
       if (!decoded?.role) {
          res.status(401).json({ message: "Unauthorized: Invalid token payload" });
+         return;
       }
 
       // 🚀 **Role-based access control**
       if (allowedRoles.length > 0 && !allowedRoles.includes(decoded.role)) {
        res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+       return;
       }
 
       req.user = decoded;
