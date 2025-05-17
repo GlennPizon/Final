@@ -1,9 +1,10 @@
-export class Account {
-    id?: string;
-    title?: string;
-    firstname?: string;
-    lastname?: string;
-    email?: string;
-    role?: string;
-    jwtToken?: string;
+export interface Account {
+  id: string;
+  email: string;
+  password?: string;
+  firstName: string;
+  lastName: string;
+  role: Role;
+  jwtToken?: string;
+  isVerified?: boolean;
 }
