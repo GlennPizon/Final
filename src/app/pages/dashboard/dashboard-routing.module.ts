@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 import { AccountsListComponent } from './accounts/accounts-list.component';
+import { DepartmentsModule } from './departments/departments.module';
+import { DepartmentsComponent } from './departments/departments.component';
 
 const routes: Routes = [
   {
@@ -14,8 +16,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'accounts',
-        pathMatch: 'full'
+        component: DepartmentsComponent
       }
     ]
   }

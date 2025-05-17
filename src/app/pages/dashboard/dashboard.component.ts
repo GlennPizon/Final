@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NavigationComponent } from '../../shared/navigation/navigation.component';
 
 @Component({
   selector: 'app-employee-dashboard',
@@ -11,33 +12,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     RouterModule,
     RouterLink,
     RouterLinkActive,
-    NgbModule
+    NgbModule,
+    NavigationComponent
   ],
   template: `
     <div class="container-fluid">
       <div class="row">
-        <!-- Navigation Menu -->
         <div class="col-12 mb-3">
-          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/dashboard/accounts']">Accounts</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/dashboard/employees']">Employees</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/dashboard/departments']">Departments</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/dashboard/requests']">Requests</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
+          <app-navigation></app-navigation>
         </div>
         <router-outlet></router-outlet>
       </div>
@@ -66,6 +48,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       margin-left: 15px;
       text-decoration: none;
       color: #0d6efd;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+    }
+    .nav-links a.router-link-active {
+      background-color: #0d6efd;
+      color: white;
+      font-weight: bold;
     }
     .table {
       width: 100%;

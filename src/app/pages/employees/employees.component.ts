@@ -2,21 +2,31 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, RouterModule } from '@angular/router';
 import { Employee } from '../../models/employee.model';
+import { NavigationComponent } from '../../shared/navigation/navigation.component';
 
 @Component({
   selector: 'app-employees',
   imports: [
     CommonModule,
     RouterLink,
-    RouterModule
+    RouterModule,
+    NavigationComponent
   ],
   standalone: true,
   template: `
-    <div class="card mb-4">
-      <div class="card-header">
-        <h3 class="mb-0">EMPLOYEES</h3>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 mb-3">
+          <app-navigation></app-navigation>
+        </div>
       </div>
-      <div class="card-body">
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="mb-0">EMPLOYEES</h3>
+            </div>
+            <div class="card-body">
         <div class="mb-3">
         <table class="table">
           <thead>

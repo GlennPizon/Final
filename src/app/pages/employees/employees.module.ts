@@ -14,6 +14,10 @@ const routes: Routes = [
     component: EmployeesComponent
   },
   {
+    path: 'request',
+    component: RequestComponent
+  },
+  {
     path: ':id/requests',
     component: EmployeeRequestsPageComponent
   },
@@ -27,6 +31,7 @@ const routes: Routes = [
   }
 ];
 
+import { RequestComponent } from './request/request.component';
 import { EmployeesComponent } from './employees.component';
 import { EmployeeDashboardComponent } from './dashboard/dashboard.component';
 import { EmployeeRequestsComponent } from './requests/requests.component';

@@ -16,82 +16,89 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   template: `
     <div class="container-fluid">
       <div class="row">
-        <!-- Navigation Menu -->
-        <div class="col-md-3">
-          <div class="card">
-            <div class="card-header">
-              <h4 class="mb-0">Navigation</h4>
+        <div class="col-12 mb-3">
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/dashboard/accounts" routerLinkActive="active">Accounts</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/employees" routerLinkActive="active">Employees</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/dashboard/departments" routerLinkActive="active">Departments</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" routerLink="/dashboard/requests" routerLinkActive="active">Requests</a>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="card-body">
-              <ul class="nav nav-pills flex-column mb-3">
-                <li class="nav-item">
-                  <a class="nav-link active" [routerLink]="['/accounts']">
-                    <i class="bi bi-person-circle"></i> Accounts
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" [routerLink]="['/employees']">
-                    <i class="bi bi-people"></i> Employees
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" [routerLink]="['/departments']">
-                    <i class="bi bi-building"></i> Departments
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" [routerLink]="['/requests']">
-                    <i class="bi bi-send"></i> Requests
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+          </nav>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="col-md-9">
-          <div class="row">
-            <div class="col-md-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Total Accounts</h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="display-4">120</span>
-                    <i class="bi bi-person-circle text-primary display-1"></i>
-                  </div>
-                </div>
+      </div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="mb-0">Employees</h3>
               </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Active Employees</h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="display-4">85</span>
-                    <i class="bi bi-people text-success display-1"></i>
-                  </div>
+              <div class="card-body">
+                <div class="table-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Employee ID</th>
+                        <th>Account</th>
+                        <th>Position</th>
+                        <th>Department</th>
+                        <th>Hire Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>E001</td>
+                        <td>john.doe&#64;example.com</td>
+                        <td>Software Engineer</td>
+                        <td>Engineering</td>
+                        <td>2023-01-15</td>
+                        <td>Active</td>
+                        <td>
+                          <div class="d-flex gap-1">
+                            <a class="btn btn-sm btn-outline-secondary" routerLink="/employees/request">Request</a>
+                            <button class="btn btn-sm btn-outline-secondary">Workflows</button>
+                            <button class="btn btn-sm btn-outline-secondary">Transfer</button>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>E002</td>
+                        <td>jane.smith&#64;example.com</td>
+                        <td>Project Manager</td>
+                        <td>Management</td>
+                        <td>2022-06-20</td>
+                        <td>Active</td>
+                        <td>
+                          <div class="d-flex gap-1">
+                            <a class="btn btn-sm btn-outline-secondary" routerLink="/employees/request">Request</a>
+                            <button class="btn btn-sm btn-outline-secondary">Workflows</button>
+                            <button class="btn btn-sm btn-outline-secondary">Transfer</button>
+                            <button class="btn btn-sm btn-primary">Edit</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Departments</h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="display-4">10</span>
-                    <i class="bi bi-building text-info display-1"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Pending Requests</h5>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="display-4">23</span>
-                    <i class="bi bi-send text-warning display-1"></i>
+                <div class="mt-3">
+                  <div class="d-flex justify-content-end">
+                    <button class="btn btn-sm btn-primary">Add Employee</button>
                   </div>
                 </div>
               </div>
@@ -99,16 +106,11 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
           </div>
         </div>
       </div>
-    </div>
-          </ul>
-        </div>
-      </div>
-
       <router-outlet></router-outlet>
-
-
     </div>
-  `,
+  `
+
+,
   styles: [`
     .header {
       display: flex;
@@ -154,5 +156,5 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   `]
 })
 export class EmployeeDashboardComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 }

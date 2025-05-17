@@ -10,7 +10,7 @@ import { AccountModalComponent } from './account-modal.component';
 @Component({
   selector: 'app-accounts-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbModule, AccountModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgbModule],
   template: `
     <div class="container-fluid py-3">
       <div class="d-flex justify-content-between align-items-center mb-3">

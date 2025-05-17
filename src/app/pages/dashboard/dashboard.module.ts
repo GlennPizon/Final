@@ -7,13 +7,15 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { AccountsListComponent } from './accounts/accounts-list.component';
 import { AccountModalComponent } from './accounts/account-modal.component';
+import { AccountsRoutingModule } from './accounts/accounts-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     NgbModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+    AccountsRoutingModule
   ]
 })
 export class DashboardModule { }

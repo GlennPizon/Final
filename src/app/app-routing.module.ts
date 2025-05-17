@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'dashboard',
+    path: 'accounts',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
   {
@@ -11,8 +11,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/employees/employees.module').then(m => m.EmployeesModule)
   },
   {
+    path: 'departments',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
+  {
+    path: 'requests',
+    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
+  {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'accounts',
     pathMatch: 'full'
   }
 ];
