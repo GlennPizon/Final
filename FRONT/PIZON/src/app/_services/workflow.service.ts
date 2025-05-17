@@ -24,4 +24,7 @@ export class WorkflowService {
   initiateOnboarding(params: any) {
     return this.http.post(`${baseUrl}/onboarding`, params);
   }
+  getAll() {
+    return this.http.get<Workflow[]>(baseUrl);
+  }
 }
