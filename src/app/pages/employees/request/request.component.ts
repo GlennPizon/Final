@@ -1,39 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-request',
   standalone: true,
-  imports: [CommonModule, NgbModule, RouterModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, NgbModule, RouterModule],
   template: `
     <div class="container-fluid">
       <div class="row">
-        <!-- Navigation Menu -->
-        <div class="col-12 mb-3">
-          <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-              <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link" routerLink="/accounts" routerLinkActive="active">Accounts</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" routerLink="/employees" routerLinkActive="active">Employees</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" routerLink="/departments" routerLinkActive="active">Departments</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" routerLink="/requests" routerLinkActive="active">Requests</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </div>
-
         <div class="col-12">
           <div class="card">
             <div class="card-body">

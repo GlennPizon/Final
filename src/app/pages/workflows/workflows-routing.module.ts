@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DepartmentsComponent } from './departments.component';
+import { WorkflowComponent } from './workflow.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./departments.component').then(m => m.DepartmentsComponent)
+    loadComponent: () => import('./workflow.component').then(m => m.WorkflowComponent)
   }
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DepartmentsRoutingModule { }
+export class WorkflowsRoutingModule { }

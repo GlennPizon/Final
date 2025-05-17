@@ -16,7 +16,7 @@ import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
               <a class="nav-link" routerLink="/accounts" routerLinkActive="active">Accounts</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/employees/list" routerLinkActive="active">Employees</a>
+              <a class="nav-link" routerLink="/employees" routerLinkActive="active">Employees</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" routerLink="/departments" routerLinkActive="active">Departments</a>

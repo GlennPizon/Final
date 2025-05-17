@@ -1,28 +1,23 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NavigationComponent } from '../../shared/navigation/navigation.component';
 
 @Component({
-  selector: 'app-employee-dashboard',
+  selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule,
-    RouterLink,
-    RouterLinkActive,
     NgbModule,
     NavigationComponent
   ],
   template: `
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-12 mb-3">
-          <app-navigation></app-navigation>
-        </div>
-        <router-outlet></router-outlet>
-      </div>
+      <app-navigation></app-navigation>
+      <router-outlet></router-outlet>
     </div>
   `,
   styles: [`

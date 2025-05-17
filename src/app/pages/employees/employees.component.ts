@@ -1,32 +1,28 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Employee } from '../../models/employee.model';
-import { NavigationComponent } from '../../shared/navigation/navigation.component';
 
 @Component({
   selector: 'app-employees',
+  standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
     RouterLink,
-    RouterModule,
-    NavigationComponent
+    RouterModule
   ],
-  standalone: true,
   template: `
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-12 mb-3">
-          <app-navigation></app-navigation>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h3 class="mb-0">Employees</h3>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card mb-4">
-            <div class="card-header">
-              <h3 class="mb-0">EMPLOYEES</h3>
-            </div>
-            <div class="card-body">
+        <div class="card-body">
         <div class="mb-3">
         <table class="table">
           <thead>
@@ -60,16 +56,16 @@ import { NavigationComponent } from '../../shared/navigation/navigation.componen
               </td>
               <td>
                 <div class="btn-group">
-                  <button class="btn btn-sm btn-primary" [routerLink]="['/employees', employee.id, 'requests']">
+                  <button class="btn btn-sm btn-primary" [routerLink]="['requests']">
                     <i class="bi bi-send"></i> Request
                   </button>
-                  <button class="btn btn-sm btn-info" [routerLink]="['/employees', employee.id, 'workflows']">
+                  <button class="btn btn-sm btn-info" [routerLink]="['workflows']">
                     <i class="bi bi-diagram-3"></i> Workflows
                   </button>
-                  <button class="btn btn-sm btn-warning" [routerLink]="['/employees', employee.id, 'transfer']">
+                  <button class="btn btn-sm btn-warning" [routerLink]="['transfer']">
                     <i class="bi bi-arrow-left-right"></i> Transfer
                   </button>
-                  <button class="btn btn-sm btn-secondary" [routerLink]="['/employees', employee.id, 'edit']">
+                  <button class="btn btn-sm btn-secondary" [routerLink]="['edit']">
                     <i class="bi bi-pencil"></i> Edit
                   </button>
                 </div>
@@ -78,7 +74,7 @@ import { NavigationComponent } from '../../shared/navigation/navigation.componen
           </tbody>
         </table>
         <div class="mt-3 d-flex justify-content-end">
-          <button class="btn btn-sm btn-primary" [routerLink]="['/employees/new']">
+          <button class="btn btn-sm btn-primary" [routerLink]="['new']">
             <i class="bi bi-plus-circle"></i> Add Employee
           </button>
         </div>

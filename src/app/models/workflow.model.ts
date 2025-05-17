@@ -1,3 +1,5 @@
+import { Employee } from './employee.model';
+
 export interface Workflow {
     id: number;
     type: 'onboarding' | 'department_change' | 'leave_request';

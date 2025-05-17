@@ -1,34 +1,72 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Account } from '../models/account.model';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private apiUrl = `${environment.apiUrl}/accounts`;
+  private accounts: Account[] = [
+    {
+      id: 1,
+      title: 'Mr.',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      role: 'admin',
+      status: 'active'
+    },
+    {
+      id: 2,
+      title: 'Ms.',
+      firstName: 'Jane',
+      lastName: 'Smith',
+      email: 'jane.smith@example.com',
+      role: 'user',
+      status: 'active'
+    },
+    {
+      id: 3,
+      title: 'Dr.',
+      firstName: 'Mike',
+      lastName: 'Johnson',
+      email: 'mike.johnson@example.com',
+      role: 'user',
+      status: 'inactive'
+    }
+  ];
+  private nextId = 4;
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   getAccounts(): Observable<Account[]> {
-    return this.http.get<Account[]>(this.apiUrl);
+    return of(this.accounts);
   }
 
   getAccount(id: number): Observable<Account> {
-    return this.http.get<Account>(`${this.apiUrl}/${id}`);
+    const account = this.accounts.find(a => a.id === id) as Account;
+    return of(account);
   }
 
   createAccount(account: Omit<Account, 'id'>): Observable<Account> {
-    return this.http.post<Account>(this.apiUrl, account);
+    const newAccount = { ...account, id: this.nextId++ };
+    this.accounts.push(newAccount);
+    return of(newAccount);
   }
 
   updateAccount(id: number, changes: Partial<Account>): Observable<Account> {
-    return this.http.put<Account>(`${this.apiUrl}/${id}`, changes);
+    const index = this.accounts.findIndex(a => a.id === id);
+    if (index !== -1) {
+      this.accounts[index] = { ...this.accounts[index], ...changes };
+    }
+    return of(this.accounts[index]);
   }
 
   deleteAccount(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const index = this.accounts.findIndex(a => a.id === id);
+    if (index !== -1) {
+      this.accounts.splice(index, 1);
+    }
+    return of();
   }
 }

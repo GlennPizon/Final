@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-root',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, DashboardComponent],
   template: `
-    <router-outlet></router-outlet>
+    <app-dashboard></app-dashboard>
   `
 })
 export class AppComponent {}
