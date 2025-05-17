@@ -7,13 +7,13 @@
         "database": "u875409848_salagunting"
     },
         "secret": "TcxtoIgRRbUqqgW174x1zAA==",
-        "emailFrom": "usermanagementsystem.amama.1wellplayed@gmail.com",
+        "emailFrom": "bulah.harris@ethereal.email",
         "smtpOptions": {  
-        "host": "smtp.gmail.com",
+        "host": "smtp.ethereal.email",
         "port": 587,
         "auth": {
-        "user": "amama.1wellplayed@gmail.com",
-        "pass": "bcpk tlis uicq bagf"
+            "user": "bulah.harris@ethereal.email",
+            "pass": "XaQusmRecHDtETm7zw"
         }
         }
 
