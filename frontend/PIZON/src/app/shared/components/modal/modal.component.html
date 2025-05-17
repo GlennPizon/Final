@@ -1,0 +1,6 @@
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <ng-content></ng-content>
+    <button (click)="onClose()">Close</button>
+  </div>
+</div>

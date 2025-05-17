@@ -1,0 +1,10 @@
+.shell-container {
+  display: flex;
+}
+
+.shell-content {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}

@@ -1,0 +1,20 @@
+<app-navbar></app-navbar>
+
+<div class="shell-container">
+  <app-sidebar></app-sidebar>
+
+  <div class="shell-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!-- Optional: Loader -->
+<app-loader *ngIf="isLoading"></app-loader>
+
+<!-- Optional: Toast -->
+<app-toast
+  *ngIf="showToast"
+  [message]="toastMessage"
+  [type]="toastType"
+  (click)="closeToast()"
+></app-toast>
