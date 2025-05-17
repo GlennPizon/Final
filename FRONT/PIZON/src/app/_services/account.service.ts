@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Account } from '../_models/account';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
@@ -53,6 +53,26 @@ export class AccountService {
       confirmPassword
     });
   }
+
+  getById(id: number) {
+    return this.http.get<Account>(`${environment.apiUrl}/accounts/${id}`);
+  }
+
+
+  getAll() {
+    return this.http.get<Account[]>(`${environment.apiUrl}/accounts`);
+  }
+
+
+  update(id: number, params: any) {
+    return this.http.put(`${environment.apiUrl}/accounts/${id}`, params);
+  }
+
+
+  delete(id: number) {
+    return this.http.delete(`${environment.apiUrl}/accounts/${id}`);
+  }
+
 
   refreshToken() {
     return this.http.post<any>(`${environment.apiUrl}/accounts/refresh-token`, {});
