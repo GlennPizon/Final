@@ -1,368 +1,373 @@
-<div class="accounts-container">
-    <div class="accounts-card">
-      <div class="accounts-header">
-        <div class="header-content">
-          <i class="bi bi-people"></i>
-          <h2>User Accounts</h2>
-        </div>
-        <a routerLink="add" class="add-account-btn">
-          <i class="bi bi-plus-circle"></i>
-          <span>Add Account</span>
-        </a>
-      </div>
-  
-      <div class="accounts-table-container">
-        <table class="accounts-table">
-          <thead>
-            <tr>
-              <th class="user-col">User</th>
-              <th class="email-col">Email</th>
-              <th class="role-col">Role</th>
-              <th class="status-col">Status</th>
-              <th class="actions-col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let account of accounts">
-              <td>
-                <div class="user-info">
-                  <div class="user-avatar">
-                    <span>{{account.firstName?.charAt(0)}}{{account.lastName?.charAt(0)}}</span>
-                  </div>
-                  <div class="user-name">
-                    {{account.title}} {{account.firstName}} {{account.lastName}}
-                  </div>
-                </div>
-              </td>
-              <td>{{account.email}}</td>
-              <td>
-                <span class="role-badge" [ngClass]="{'admin': account.role === 'Admin', 'user': account.role === 'User'}">
-                  {{account.role}}
-                </span>
-              </td>
-              <td>
-                <span *ngIf="account.role === 'Admin'" class="status-badge always-active">Always Active</span>
-                <span *ngIf="account.role !== 'Admin'" class="status-badge" 
-                      [ngClass]="{'active': account.isActive, 'inactive': !account.isActive}">
-                  {{account.isActive ? 'Active' : 'Inactive'}}
-                </span>
-              </td>
-              <td class="actions-cell">
-                <div class="action-buttons">
-                  <a routerLink="edit/{{account.id}}" class="action-btn edit-btn">
-                    <i class="bi bi-pencil"></i>
-                  </a>
-                  
-                  <button *ngIf="account.role !== 'Admin'" (click)="deleteAccount(account.id)" 
-                          class="action-btn delete-btn" [disabled]="account.isDeleting">
-                    <span *ngIf="account.isDeleting" class="spinner"></span>
-                    <i *ngIf="!account.isDeleting" class="bi bi-trash"></i>
-                  </button>
-  
-                  <button *ngIf="account.role !== 'Admin'" (click)="toggleActivation(account)" 
-                          class="action-btn toggle-btn" 
-                          [ngClass]="{'activate': !account.isActive, 'deactivate': account.isActive}"
-                          [disabled]="account.isToggling">
-                    <span *ngIf="account.isToggling" class="spinner"></span>
-                    <i *ngIf="!account.isToggling" class="bi" 
-                       [ngClass]="{'bi-check-circle': !account.isActive, 'bi-pause-circle': account.isActive}"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="!accounts || accounts.length === 0">
-              <td colspan="5" class="empty-state">
-                <div *ngIf="!accounts" class="loading-spinner"></div>
-                <div *ngIf="accounts?.length === 0" class="no-results">
-                  <i class="bi bi-info-circle"></i>
-                  <span>No accounts found</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<div class="accounts-new-container">
+  <div class="accounts-new-header">
+    <h2><i class="bi bi-person-badge"></i> Manage Users</h2>
+    <a routerLink="add" class="btn-add-account">
+      <i class="bi bi-plus-lg"></i> Add New
+    </a>
   </div>
-  
-  <style>
-  .accounts-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+
+  <div class="accounts-new-table-wrapper">
+    <table class="accounts-new-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let account of accounts" class="account-row">
+          <td>
+            <div class="user-cell">
+              <div class="avatar">{{account.firstName?.charAt(0)}}{{account.lastName?.charAt(0)}}</div>
+              <div class="username">{{account.title}} {{account.firstName}} {{account.lastName}}</div>
+            </div>
+          </td>
+          <td><code>{{account.email}}</code></td>
+          <td>
+            <span class="badge" [ngClass]="{'badge-admin': account.role === 'Admin', 'badge-user': account.role === 'User'}">
+              {{account.role}}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="account.role === 'Admin'" class="status-admin" title="Admin is always active">
+              <i class="bi bi-shield-lock-fill"></i> Always Active
+            </span>
+            <span *ngIf="account.role !== 'Admin'" class="status" 
+                  [ngClass]="{'active': account.isActive, 'inactive': !account.isActive}">
+              {{account.isActive ? 'Active' : 'Inactive'}}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <a routerLink="edit/{{account.id}}" class="btn-edit" title="Edit">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+              <button *ngIf="account.role !== 'Admin'" (click)="deleteAccount(account.id)" 
+                      class="btn-delete" [disabled]="account.isDeleting" title="Delete">
+                <span *ngIf="account.isDeleting" class="spinner"></span>
+                <i *ngIf="!account.isDeleting" class="bi bi-trash-fill"></i>
+              </button>
+              <button *ngIf="account.role !== 'Admin'" (click)="toggleActivation(account)" 
+                      class="btn-toggle" 
+                      [ngClass]="{'activate': !account.isActive, 'deactivate': account.isActive}"
+                      [disabled]="account.isToggling" 
+                      [title]="account.isActive ? 'Deactivate' : 'Activate'">
+                <span *ngIf="account.isToggling" class="spinner"></span>
+                <i *ngIf="!account.isToggling" class="bi" 
+                   [ngClass]="{'bi-check-circle-fill': !account.isActive, 'bi-pause-circle-fill': account.isActive}"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!accounts || accounts.length === 0">
+          <td colspan="5" class="empty-state">
+            <div *ngIf="!accounts" class="loading-spinner"></div>
+            <div *ngIf="accounts?.length === 0" class="no-results">
+              <i class="bi bi-info-circle"></i>
+              <span>No accounts found</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  /* Container */
+  .accounts-new-container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 1rem 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
   }
-  
-  .accounts-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-  }
-  
-  .accounts-header {
+
+  /* Header */
+  .accounts-new-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
-    background: linear-gradient(135deg, #4361ee, #3a0ca3);
-    color: white;
+    margin-bottom: 1.8rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.6rem;
   }
-  
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .header-content i {
-    font-size: 1.5rem;
-  }
-  
-  .header-content h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-  
-  .add-account-btn {
+
+  .accounts-new-header h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #3c1361;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: white;
-    color: #4361ee;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s;
   }
-  
-  .add-account-btn:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-  }
-  
-  .accounts-table-container {
-    overflow-x: auto;
-    padding: 0.5rem;
-  }
-  
-  .accounts-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .accounts-table thead {
-    background: #f8f9fa;
-  }
-  
-  .accounts-table th {
-    padding: 1rem;
-    text-align: left;
+
+  .btn-add-account {
+    background: #6f42c1;
+    color: white;
     font-weight: 600;
-    color: #495057;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    box-shadow: 0 6px 15px rgba(111, 66, 193, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
   }
-  
-  .accounts-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f1f3f5;
+  .btn-add-account:hover {
+    background: #872dde;
+    box-shadow: 0 8px 25px rgba(135, 45, 222, 0.5);
+  }
+
+  /* Table wrapper */
+  .accounts-new-table-wrapper {
+    overflow-x: auto;
+  }
+
+  /* Table */
+  .accounts-new-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+  }
+
+  thead tr th {
+    text-align: left;
+    font-weight: 800;
+    color: #6a4c93;
+    padding: 1rem 1.25rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border-bottom: 3px solid #6f42c1;
+    background: #f9f6fb;
+  }
+
+  tbody tr.account-row {
+    background: #faf8fe;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgb(111 66 193 / 0.15);
+    transition: transform 0.25s ease;
+  }
+  tbody tr.account-row:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(111, 66, 193, 0.25);
+  }
+
+  tbody tr.account-row td {
+    padding: 1rem 1.25rem;
     vertical-align: middle;
   }
-  
-  .user-info {
+
+  /* User cell */
+  .user-cell {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
-  
-  .user-avatar {
-    width: 36px;
-    height: 36px;
-    background: #4361ee;
+
+  .avatar {
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    background: #9b59b6;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+  }
+
+  .username {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #3c1361;
+  }
+
+  /* Email */
+  tbody td code {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.85rem;
+    background: #eee;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    color: #6a4c93;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 40px;
+    user-select: none;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+  }
+  .badge-admin {
+    background: #6f42c1;
+    color: #f3eaff;
+  }
+  .badge-user {
+    background: #9b59b6;
+    color: #f3eaff;
+  }
+
+  /* Status */
+  .status-admin {
+    color: #673ab7;
+    font-weight: 600;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.4rem;
+    user-select: none;
+  }
+  .status-admin i {
+    color: #512da8;
+  }
+
+  .status {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 40px;
+    user-select: none;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
+  }
+  .status.active {
+    background: #4caf50;
     color: white;
-    font-weight: 500;
-    font-size: 0.875rem;
   }
-  
-  .user-name {
-    font-weight: 500;
+  .status.inactive {
+    background: #f44336;
+    color: white;
   }
-  
-  .role-badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-  
-  .role-badge.admin {
-    background: rgba(67, 97, 238, 0.1);
-    color: #4361ee;
-  }
-  
-  .role-badge.user {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-  }
-  
-  .status-badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-  
-  .status-badge.active {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-  }
-  
-  .status-badge.inactive {
-    background: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-  }
-  
-  .status-badge.always-active {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
-  }
-  
-  .actions-cell {
-    text-align: right;
-  }
-  
+
+  /* Action buttons container */
   .action-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
     justify-content: flex-end;
   }
-  
-  .action-btn {
-    width: 32px;
-    height: 32px;
+
+  /* Buttons */
+  .action-buttons .btn-edit,
+  .action-buttons .btn-delete,
+  .action-buttons .btn-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
+    user-select: none;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.12);
   }
-  
-  .action-btn i {
-    font-size: 0.875rem;
+
+  .btn-edit {
+    background: #7952b3;
   }
-  
-  .edit-btn {
-    background: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
+  .btn-edit:hover {
+    background: #633ca0;
   }
-  
-  .edit-btn:hover {
-    background: rgba(13, 110, 253, 0.2);
+
+  .btn-delete {
+    background: #d9534f;
   }
-  
-  .delete-btn {
-    background: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-  }
-  
-  .delete-btn:hover {
-    background: rgba(220, 53, 69, 0.2);
-  }
-  
-  .delete-btn:disabled {
-    opacity: 0.7;
+  .btn-delete:disabled {
+    background: #d9534f99;
     cursor: not-allowed;
   }
-  
-  .toggle-btn {
-    background: rgba(255, 193, 7, 0.1);
-    color: #ffc107;
+  .btn-delete:hover:not(:disabled) {
+    background: #c9302c;
   }
-  
-  .toggle-btn.activate {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
+
+  .btn-toggle {
+    background: #f0ad4e;
+    color: #3a2e00;
   }
-  
-  .toggle-btn:hover {
-    background: rgba(255, 193, 7, 0.2);
+  .btn-toggle.activate {
+    background: #5cb85c;
+    color: white;
   }
-  
-  .toggle-btn.activate:hover {
-    background: rgba(40, 167, 69, 0.2);
-  }
-  
-  .toggle-btn:disabled {
-    opacity: 0.7;
+  .btn-toggle:disabled {
+    background: #f0ad4e99;
     cursor: not-allowed;
   }
-  
+  .btn-toggle:hover:not(:disabled) {
+    filter: brightness(0.9);
+  }
+
+  /* Spinner */
+  .spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+  }
+
+  /* Empty states */
   .empty-state {
     text-align: center;
-    padding: 3rem !important;
+    padding: 3rem 1rem !important;
+    color: #666;
   }
-  
   .loading-spinner {
-    width: 2rem;
-    height: 2rem;
-    border: 3px solid rgba(67, 97, 238, 0.2);
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 4px solid rgba(111, 66, 193, 0.3);
     border-radius: 50%;
-    border-top-color: #4361ee;
+    border-top-color: #6f42c1;
     animation: spin 1s linear infinite;
-    margin: 0 auto;
+    margin: 0 auto 1rem;
   }
-  
   .no-results {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    color: #6c757d;
+    gap: 0.6rem;
+    font-weight: 600;
   }
-  
-  .spinner {
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: currentColor;
-    animation: spin 1s linear infinite;
-  }
-  
+
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
-  
+
+  /* Responsive */
   @media (max-width: 768px) {
-    .accounts-header {
+    .accounts-new-header {
       flex-direction: column;
       align-items: flex-start;
       gap: 1rem;
     }
-    
-    .add-account-btn {
+    .btn-add-account {
       width: 100%;
       justify-content: center;
     }
-    
-    .accounts-table th, 
-    .accounts-table td {
-      padding: 0.75rem;
+    thead tr th,
+    tbody tr.account-row td {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
     }
-    
     .action-buttons {
       flex-wrap: wrap;
+      gap: 0.4rem;
     }
   }
-  </style>
+</style>
