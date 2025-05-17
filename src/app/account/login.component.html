@@ -1,0 +1,64 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6"> <!-- Made it wider -->
+      <div class="card border-0" style="
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        border-radius: 20px;
+        padding: 50px 40px;
+        color: #e0e0e0;
+        font-family: 'Segoe UI', sans-serif;
+      ">
+        <div class="text-center mb-4">
+          <h2 style="font-weight: bold; letter-spacing: 1px; color: #ffffff;">Access Portal</h2>
+          <p style="font-size: 14px; color: #ccc;">Welcome back! Please login to continue.</p>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-4">
+            <label class="form-label" style="font-size: 13px; color: #ddd;">Email</label>
+            <input type="email" formControlName="email" class="form-control"
+              style="background-color: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; color: #000;"
+              placeholder="you@example.com"
+              [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback" style="font-size: 12px;">
+              <div *ngIf="f.email.errors.required">Email is required</div>
+              <div *ngIf="f.email.errors.email">Invalid email format</div>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label" style="font-size: 13px; color: #ddd;">Password</label>
+            <input type="password" formControlName="password" class="form-control"
+              style="background-color: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; color: #000;"
+              placeholder="••••••••"
+              [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+            <div *ngIf="submitted && f.password.errors" class="invalid-feedback" style="font-size: 12px;">
+              <div *ngIf="f.password.errors.required">Password is required</div>
+            </div>
+          </div>
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="rememberMe" />
+            <label class="form-check-label" for="rememberMe" style="font-size: 13px; color: #ccc;">Keep me signed in</label>
+          </div>
+          <div class="d-grid mt-4">
+            <button type="submit" [disabled]="loading" class="btn"
+              style="background: #00b4d8; color: #fff; border: none; border-radius: 30px; padding: 12px; font-weight: 600; font-size: 14px;">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <span *ngIf="!loading">Log In</span>
+            </button>
+          </div>
+        </form>
+        <div class="text-center mt-4">
+          <small style="color: #bbb;">Trouble logging in?
+            <a routerLink="../forgot-password" style="color: #00b4d8; text-decoration: none;">Recover access</a>
+          </small>
+        </div>
+        <div class="text-center mt-2">
+          <small style="color: #bbb;">New user?
+            <a routerLink="../register" style="color: #00b4d8; text-decoration: none;">Create account</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

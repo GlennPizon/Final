@@ -1,0 +1,118 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0" style="
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border-radius: 20px;
+        padding: 50px 40px;
+        color: #e2e2e2;
+        font-family: 'Segoe UI', sans-serif;
+      ">
+        <div class="text-center mb-4">
+          <h3 style="font-weight: 700; color: #fff;">Create Account</h3>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-4">
+            <label class="form-label" style="color: #ddd;">Title</label>
+            <select formControlName="title" class="form-select"
+              style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;">
+              <option value="">Select your title</option>
+              <option value="Mr">Mr</option>
+              <option value="Mrs">Mrs</option>
+              <option value="Miss">Miss</option>
+              <option value="Ms">Ms</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label class="form-label" style="color: #ddd;">First Name</label>
+              <input type="text" formControlName="firstName" class="form-control"
+                style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;"
+                placeholder="Enter first name"
+                [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
+              <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                <div *ngIf="f.firstName.errors.required">First Name is required</div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <label class="form-label" style="color: #ddd;">Last Name</label>
+              <input type="text" formControlName="lastName" class="form-control"
+                style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;"
+                placeholder="Enter last name"
+                [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
+              <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                <div *ngIf="f.lastName.errors.required">Last Name is required</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label" style="color: #ddd;">Email Address</label>
+            <input type="email" formControlName="email" class="form-control"
+              style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;"
+              placeholder="Enter your email"
+              [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+              <div *ngIf="f.email.errors.required">Email is required</div>
+              <div *ngIf="f.email.errors.email">Email is invalid</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label class="form-label" style="color: #ddd;">Password</label>
+              <input type="password" formControlName="password" class="form-control"
+                style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;"
+                placeholder="Create password"
+                [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+              <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                <div *ngIf="f.password.errors.required">Password is required</div>
+                <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <label class="form-label" style="color: #ddd;">Confirm Password</label>
+              <input type="password" formControlName="confirmPassword" class="form-control"
+                style="background: rgba(255,255,255,0.1); border: none; border-radius: 30px; padding: 12px 20px; height: 45px; color: #000;"
+                placeholder="Confirm password"
+                [ngClass]="{ 'is-invalid': submitted && f.confirmPassword.errors }" />
+              <div *ngIf="submitted && f.confirmPassword.errors" class="invalid-feedback">
+                <div *ngIf="f.confirmPassword.errors.required">Confirm Password is required</div>
+                <div *ngIf="f.confirmPassword.errors.passwordMismatch">Passwords must match</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4 form-check">
+            <input type="checkbox" formControlName="acceptTerms" id="acceptTerms"
+              class="form-check-input"
+              [ngClass]="{ 'is-invalid': submitted && f.acceptTerms.errors }" />
+            <label for="acceptTerms" class="form-check-label" style="color: #ccc;">
+              I accept the <a href="#" class="text-info">Terms &amp; Conditions</a>
+            </label>
+            <div *ngIf="submitted && f.acceptTerms.errors" class="invalid-feedback">
+              Accept Terms & Conditions is required
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 mt-4">
+            <button type="submit" [disabled]="loading" class="btn"
+              style="background-color: #00b4d8; color: white; border: none; border-radius: 30px; padding: 12px 20px; font-weight: 600; font-size: 14px;">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <span *ngIf="!loading">CREATE ACCOUNT</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-4" style="color: #ccc;">
+          Already have an account?
+          <a routerLink="../login" class="text-info">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

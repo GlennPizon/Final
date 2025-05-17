@@ -1,235 +1,217 @@
-# **Group Project: Employee Management System**
+##### Developer 1/Amama == Developer 2/Mahawan  
+##### Frontend Developer 1/Mahinay == Frontend Developer 2/Auman
 
-## TEAM MEMBERS
+## User Management System API
 
-PIZON
-TUNDAG
-CUDILLO
-SALAGUNTING
+# Table of Contents
+- Database Setup  
+- API Endpoints  
+- Authentication  
+- Email Configuration  
+- Admin Features  
+- Error Handling  
+- Deployment  
 
-## **Overview**
+# Prerequisites
+- Node.js  
+- MySQL 9.2 or higher  
+- npm  
 
-This project is an **Employee Management System** that allows the management of employees, departments, workflows, and requests, with a focus on **role-based access control (RBAC)**.
-
-### **Key Features:**
-
-1. **Authentication & Authorization**:
-
-   * User login, registration, and email verification.
-   * JWT-based authentication with refresh tokens.
-   * Role-based access (Admin and Employee roles).
-
-2. **Employee Management**:
-
-   * CRUD operations for employees (create, read, update, delete).
-   * Employee transfer between departments.
-
-3. **Department Management**:
-
-   * CRUD operations for departments.
-   * Employee assignment to departments.
-
-4. **Workflows**:
-
-   * Create and track workflows for employee tasks (e.g., onboarding).
-   * Update workflow statuses (Pending, Approved, Rejected).
-
-5. **Requests**:
-
-   * Employees can submit requests (e.g., leave, equipment).
-   * Admins can view, approve, or reject requests.
-
----
-
-## **Technologies Used:**
-
-* **Backend**: Node.js, Express.js
-* **Database**: PostgreSQL (via TypeORM ORM)
-* **Authentication**: JWT (JSON Web Tokens)
-* **Environment**: dotenv for managing environment variables
-
----
-
-## **Project Structure:**
-
-Here is a breakdown of the project folder structure:
-
-```
-├── accounts/                # User account management
-│   ├── account.controller.ts
-│   ├── account.service.ts
-│   ├── account.routes.ts
-│   ├── account.entity.ts
-│   └── account.schema.ts
-├── employees/               # Employee management
-│   ├── employee.controller.ts
-│   ├── employee.service.ts
-│   ├── employee.routes.ts
-│   ├── employee.entity.ts
-│   └── employee.schema.ts
-├── departments/             # Department management
-│   ├── department.controller.ts
-│   ├── department.service.ts
-│   ├── department.routes.ts
-│   ├── department.entity.ts
-│   └── department.schema.ts
-├── workflows/               # Workflow management
-│   ├── workflow.controller.ts
-│   ├── workflow.service.ts
-│   ├── workflow.routes.ts
-│   ├── workflow.entity.ts
-│   └── workflow.schema.ts
-├── requests/                # Employee requests management
-│   ├── request.controller.ts
-│   ├── request.service.ts
-│   ├── request.routes.ts
-│   ├── request.entity.ts
-│   └── request.schema.ts
-├── auth/                    # Authentication routes and services
-│   ├── auth.controller.ts
-│   ├── auth.service.ts
-│   ├── auth.routes.ts
-│   ├── auth.entity.ts
-├── utils/                   # Helper utilities
-│   └── role.ts              # Enum for roles (Admin, Employee)
-├── data-source.ts           # TypeORM Data Source (DB configuration)
-├── middleware/              # Middleware for validation, authorization, error handling
-│   ├── authorize.ts
-│   └── validate-request.ts
-├── app.ts                   # Entry point for Express application
-├── .env                     # Environment variables (database URL, JWT secret)
-├── README.md                # Project documentation
-└── package.json             # Project dependencies and scripts
-```
-
----
-
-## **API Endpoints**
-
-### **🔐 Authentication (`/auth/`)**
-
-| Method | Endpoint              | Description                | Authentication |
-| ------ | --------------------- | -------------------------- | -------------- |
-| POST   | `/auth/login`         | User login, returns tokens | None           |
-| POST   | `/auth/refresh-token` | Issue new access token     | Authenticated  |
-| POST   | `/auth/revoke-token`  | Revoke a refresh token     | Authenticated  |
-| POST   | `/auth/logout`        | Log out and clear token    | Authenticated  |
-
-### **👤 Accounts (`/accounts/`)**
-
-| Method | Endpoint                  | Description                          | Authentication |
-| ------ | ------------------------- | ------------------------------------ | -------------- |
-| POST   | `/accounts/register`      | Register with email & password       | None           |
-| POST   | `/accounts/verify-email`  | Verify email via token               | None           |
-| POST   | `/accounts/authenticate`  | Authenticate user and get JWT tokens | None           |
-| POST   | `/accounts/refresh-token` | Refresh JWT token                    | Authenticated  |
-| POST   | `/accounts/revoke-token`  | Revoke refresh token                 | Authenticated  |
-| GET    | `/accounts`               | Get all accounts (Admin only)        | Admin          |
-| GET    | `/accounts/:id`           | Get single account                   | Authenticated  |
-| PUT    | `/accounts/:id`           | Update email/password                | Authenticated  |
-| DELETE | `/accounts/:id`           | Delete an account (Admin only)       | Admin          |
-
----
-
-### **🧑‍💼 Employees (`/employees/`)**
-
-| Method | Endpoint                  | Description                         | Authentication |
-| ------ | ------------------------- | ----------------------------------- | -------------- |
-| POST   | `/employees`              | Create employee (Admin only)        | Admin          |
-| GET    | `/employees`              | List all employees                  | Authenticated  |
-| GET    | `/employees/:id`          | Get single employee                 | Authenticated  |
-| PUT    | `/employees/:id`          | Update employee info                | Admin          |
-| DELETE | `/employees/:id`          | Remove employee (Admin only)        | Admin          |
-| POST   | `/employees/:id/transfer` | Transfer employee to new department | Admin          |
-
----
-
-### **🏢 Departments (`/departments/`)**
-
-| Method | Endpoint           | Description                    | Authentication |
-| ------ | ------------------ | ------------------------------ | -------------- |
-| POST   | `/departments`     | Create department (Admin only) | Admin          |
-| GET    | `/departments`     | List all departments           | Authenticated  |
-| GET    | `/departments/:id` | Get one department             | Authenticated  |
-| PUT    | `/departments/:id` | Update department              | Admin          |
-| DELETE | `/departments/:id` | Delete department              | Admin          |
-
----
-
-### **🔄 Workflows (`/workflows/`)**
-
-| Method | Endpoint                          | Description                               | Authentication |
-| ------ | --------------------------------- | ----------------------------------------- | -------------- |
-| POST   | `/workflows`                      | Create workflow (Admin only)              | Admin          |
-| GET    | `/workflows/employee/:employeeId` | Get workflows for an employee             | Authenticated  |
-| PUT    | `/workflows/:id/status`           | Update status (Pending/Approved/Rejected) | Admin          |
-| POST   | `/workflows/onboarding`           | Initiate employee onboarding              | Admin          |
-
----
-
-### **📥 Requests (`/requests/`)**
-
-| Method | Endpoint        | Description                             | Authentication |
-| ------ | --------------- | --------------------------------------- | -------------- |
-| POST   | `/requests`     | Create request (leave, equipment, etc.) | Authenticated  |
-| GET    | `/requests`     | Admin: view all requests                | Admin          |
-| GET    | `/requests/my`  | Employee: view own requests             | Authenticated  |
-| GET    | `/requests/:id` | Get request by ID                       | Authenticated  |
-| PUT    | `/requests/:id` | Admin: update status/items              | Admin          |
-| DELETE | `/requests/:id` | Delete request (Admin only)             | Admin          |
-
----
-
-## **Setting Up the Project**
-
-### 1. **Clone the Repository**
-
-```bash
-git clone <repository-url>
-cd <project-directory>
-```
-
-### 2. **Install Dependencies**
+# Installation
 
 ```bash
 npm install
-```
-
-### 3. **Set up Environment Variables**
-
-Copy `.env.example` to `.env` and configure the following:
-
-```
-JWT_SECRET=your_jwt_secret_key
-APP_PORT=4000
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=your_db_username
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-```
-
-### 4. **Run the Development Server**
-
-```bash
-npm run dev
-```
-
-### 5. **Testing the API**
-
-You can now test the API endpoints using **Postman** or **cURL**. Here are a few examples:
-
-#### **POST /accounts/register**
-
-```json
+Configuration (config.json)
+json
+Copy
+Edit
 {
+  "database": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "your_db_password",
+    "database": "ums_api_db"
+  },
+  # ETHERNAL EMAIL ACCOUNT
+  "secret": "YourSecretKeyHere",
+  "emailFrom": "info@yourdomain.com",
+  "smtpOptions": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "auth": {
+      "user": "erick.shanahan@ethereal.email",
+        "pass": "EDUugw48M7FsmzfFjU",
+    }
+  }
+}
+🔒 Replace credentials before deployment!
+
+Start Development Server
+bash
+Copy
+Edit
+npm run start:dev
+MySQL Setup
+sql
+Copy
+Edit
+-- Connect to MySQL
+\connect root@localhost
+
+-- Create the database
+CREATE DATABASE `ums_api_db`;
+
+-- Use the new database
+USE ums_api_db;
+API Endpoints
+Authentication
+Register (First user becomes Admin)
+POST /accounts/register
+
+json
+Copy
+Edit
+{
+  "title": "Mr",
   "firstName": "John",
   "lastName": "Doe",
   "email": "john.doe@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!",
+  "acceptTerms": true
+}
+Verify Email
+POST /accounts/verify-email
+
+json
+Copy
+Edit
+{
+  "token": "email-verification-token"
+}
+Authenticate/Login
+POST /accounts/authenticate
+
+json
+Copy
+Edit
+{
+  "email": "john.doe@example.com",
   "password": "Password123!"
 }
-```
+Response Example
 
----
+json
+Copy
+Edit
+{
+  "id": 5,
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "role": "User",
+  "jwtToken": "...",
+  "refreshToken": "..."
+}
+Refresh Token
+POST /accounts/refresh-token
+Requires: refreshToken cookie
 
+Revoke Token
+POST /accounts/revoke-token
 
+json
+Copy
+Edit
+{
+  "token": "refresh-token"
+}
+Admin Endpoints
+Get All Users
+GET /accounts
+Access: Admin Only
+
+Get User by ID
+GET /accounts/{id}
+Access: Admin or Owner
+
+Create User (Admin)
+POST /accounts
+
+json
+Copy
+Edit
+{
+  "title": "Mr",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!",
+  "role": "User"
+}
+Update User
+PUT /accounts/{id}
+
+json
+Copy
+Edit
+{
+  "firstName": "Updated",
+  "lastName": "Name"
+}
+Delete User
+DELETE /accounts/{id}
+
+Password Management
+Forgot Password
+POST /accounts/forgot-password
+
+json
+Copy
+Edit
+{
+  "email": "john.doe@example.com"
+}
+Validate Reset Token
+POST /accounts/validate-reset-token
+
+json
+Copy
+Edit
+{
+  "token": "reset-token"
+}
+Reset Password
+POST /accounts/reset-password
+
+json
+Copy
+Edit
+{
+  "token": "reset-token",
+  "password": "NewPassword123!",
+  "confirmPassword": "NewPassword123!"
+}
+Error Handling
+200 OK
+
+400 Bad Request
+
+401 Unauthorized
+
+403 Forbidden
+
+404 Not Found
+
+500 Internal Server Error
+
+Error Response Format:
+
+json
+Copy
+Edit
+{
+  "message": "Description of the error"
+}

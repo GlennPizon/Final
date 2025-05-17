@@ -1,0 +1,20 @@
+{
+    "database": {
+        "host": "153.92.15.31",
+        "port": 3306,
+        "user": "u875409848_salagunting",
+        "password": "9T2Z5$3UKkgSYzE",
+        "database": "u875409848_salagunting"
+    },
+        "secret": "TcxtoIgRRbUqqgW174x1zAA==",
+        "emailFrom": "usermanagementsystem.Donairecris2@gmail.com",
+        "smtpOptions": {  
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "auth": {
+        "user": "Donairecris2@gmail.com",
+        "pass": "lmed smhe pvea ohcy"
+        }
+        }
+
+    }
