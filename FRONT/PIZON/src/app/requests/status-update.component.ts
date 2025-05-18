@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { Request } from '../_models';
 import { RequestService } from '../_services';
 import { AlertService } from '../_services';
@@ -10,43 +10,43 @@ import { AlertService } from '../_services';
 export class StatusUpdateComponent implements OnChanges {
   @Input() request!: Request;
 
-  statusOptions = ['Pending', 'Approved', 'Rejected'];
+  statusOptions: Array<'Pending' | 'Approved' | 'Rejected'> = ['Pending', 'Approved', 'Rejected'];
   selectedStatus: string = '';
   updating = false;
 
   constructor(
     private requestService: RequestService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['request'] && this.request) {
-      this.selectedStatus = this.request.status;
+    if (changes['request']?.currentValue) {
+      this.selectedStatus = changes['request'].currentValue.status;
+      this.cdRef.detectChanges(); // Ensures Angular syncs the view
     }
   }
 
   updateStatus(): void {
-    if (!this.selectedStatus || this.selectedStatus === this.request.status) {
-      this.alertService.info('Please select a new status to update.');
+    if (!this.statusOptions.includes(this.selectedStatus as 'Pending' | 'Approved' | 'Rejected') || this.selectedStatus === this.request.status) {
+      this.alertService.info('Please select a valid new status.');
       return;
     }
 
     this.updating = true;
 
-    this.requestService.update(this.request.id, {
-      ...this.request,
-      status: this.selectedStatus
-    }).subscribe({
-      next: () => {
-        this.request.status = this.selectedStatus;
-        this.alertService.success('Request status updated successfully.');
-        this.updating = false;
-      },
-      error: (err) => {
-        console.error('Failed to update status', err);
-        this.alertService.error('Error updating status. Please try again.');
-        this.updating = false;
-      }
-    });
+    this.requestService.update(this.request.id, { status: this.selectedStatus })
+      .subscribe({
+        next: () => {
+          this.request.status = this.selectedStatus as 'Pending' | 'Approved' | 'Rejected';
+          this.alertService.success('Request status updated successfully.');
+          this.updating = false;
+        },
+        error: (err) => {
+          const errorMsg = err?.message || 'Error updating status. Please try again.';
+          this.alertService.error(errorMsg);
+          this.updating = false;
+        }
+      });
   }
 }

@@ -6,6 +6,9 @@ export interface Account {
   id: string; // UUID
   email: string;
   passwordHash?: string;
+  firstname: string;
+  lastname: string;
+  
   role: Role;
   isVerified: boolean;
   verificationToken?: string;

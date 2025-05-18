@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from '../../_services/account.service';
 import { AlertService } from '../../_services/alert.service';
+import { Account } from '../../_models';
 
 @Component({
   selector: 'app-profile-update',
@@ -20,7 +21,7 @@ export class UpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const account = this.accountService.userValue;
+    const account: Account | null = this.accountService.userValue;
 
     if (!account) {
       this.alertService.error('User account not found.');
@@ -28,8 +29,8 @@ export class UpdateComponent implements OnInit {
     }
 
     this.form = this.formBuilder.group({
-      firstName: [account.firstName, Validators.required],
-      lastName: [account.lastName, Validators.required],
+      firstName: [account.firstname, Validators.required],
+      lastName: [account.lastname, Validators.required],
       email: [{ value: account.email, disabled: true }],
       password: ['', Validators.minLength(6)]
     });
