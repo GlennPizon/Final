@@ -1,7 +1,14 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-toast',
+  imports:[
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.css']
 })
