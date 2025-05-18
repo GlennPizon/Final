@@ -1,0 +1,64 @@
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="login-header">
+      <h1>Welcome Back</h1>
+      <p class="subtitle">Sign in to your account</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-field">
+        <label for="email">
+          <span class="label-text">Email</span>
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.error]="submitted && f['email'].errors"
+          />
+          <div class="error-message" *ngIf="submitted && f['email'].errors">
+            <span *ngIf="f['email'].errors['required']">Email is required</span>
+            <span *ngIf="f['email'].errors['email']">Please enter a valid email</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="password">
+          <span class="label-text">Password</span>
+        </label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.error]="submitted && f['password'].errors"
+          />
+          <div class="error-message" *ngIf="submitted && f['password'].errors">
+            <span *ngIf="f['password'].errors['required']">Password is required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span class="checkbox-label">Remember me</span>
+        </label>
+        <a href="#" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-button" [disabled]="loginForm.invalid">
+        <span class="button-text">Sign In</span>
+      </button>
+
+      <div class="register-prompt">
+        <span>Don't have an account?</span>
+        <a href="#" class="register-link">Create Account</a>
+      </div>
+    </form>
+  </div>
+</div> 

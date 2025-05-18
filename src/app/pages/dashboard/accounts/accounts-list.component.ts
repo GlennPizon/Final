@@ -13,8 +13,7 @@ import { AccountModalComponent } from './account-modal.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgbModule,
-    AccountModalComponent
+    NgbModule
   ],
   template: `
     <div class="container-fluid py-3">

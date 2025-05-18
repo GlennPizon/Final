@@ -11,12 +11,18 @@ import { environment } from '../../environments/environment';
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient) {
     this.currentUserSubject = new BehaviorSubject<User | null>(
       JSON.parse(localStorage.getItem('currentUser') || 'null')
     );
     this.currentUser = this.currentUserSubject.asObservable();
+
+    // Check if there's a stored token or other auth state
+    const hasToken = localStorage.getItem('auth_token');
+    this.isAuthenticatedSubject.next(!!hasToken);
   }
 
   public get currentUserValue(): User | null {
@@ -27,7 +33,9 @@ export class AuthService {
     return this.http.post<User>(`${environment.apiUrl}/auth/login`, { email, password })
       .pipe(map(user => {
         localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('auth_token', 'dummy_token');
         this.currentUserSubject.next(user);
+        this.isAuthenticatedSubject.next(true);
         return user;
       }));
   }
@@ -50,7 +58,9 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('auth_token');
     this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
   }
 
   updateProfile(id: number, changes: Partial<User>) {
@@ -63,5 +73,9 @@ export class AuthService {
         }
         return user;
       }));
+  }
+
+  isAuthenticated(): boolean {
+    return this.isAuthenticatedSubject.value;
   }
 }

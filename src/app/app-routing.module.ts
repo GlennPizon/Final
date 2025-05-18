@@ -1,28 +1,45 @@
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AuthGuard } from './guards/auth.guard';
 
-export const APP_ROUTER: Routes = [
+export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/accounts',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
+  },
+  {
     path: 'accounts',
-    loadComponent: () => import('./pages/dashboard/accounts/accounts-list.component').then(m => m.AccountsListComponent)
+    loadComponent: () => import('./pages/dashboard/accounts/accounts-list.component').then(m => m.AccountsListComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: 'departments',
-    loadComponent: () => import('./pages/dashboard/departments/departments.component').then(m => m.DepartmentsComponent)
+    loadComponent: () => import('./pages/departments/departments.component').then(m => m.DepartmentsComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: 'employees',
-    loadChildren: () => import('./pages/employees/employees.module').then(m => m.EmployeesModule)
+    loadChildren: () => import('./pages/employees/employees.module').then(m => m.EmployeesModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'workflows',
-    loadChildren: () => import('./pages/workflows/workflows.module').then(m => m.WorkflowsModule)
+    loadChildren: () => import('./pages/workflows/workflows.module').then(m => m.WorkflowsModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '**',
+    redirectTo: 'login'
   }
 ];
 
-export const routerConfig = RouterModule.forRoot(APP_ROUTER);
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
