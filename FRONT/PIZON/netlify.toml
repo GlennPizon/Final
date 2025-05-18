@@ -1,7 +1,7 @@
 [build]
 base = "FRONT/PIZON"
 command = "npx ng build --configuration=production"
-publish = "FRONT/PIZON/dist/pizon"
+publish = "FRONT/PIZON/dist/pizon/browser"
 
 [functions]
 directory="FRONT/PIZON/netlify"
