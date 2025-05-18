@@ -1,0 +1,22 @@
+<table class="table table-bordered table-hover" *ngIf="!loading">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Workflow ID</th>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let req of requests">
+      <td>{{ req.id }}</td>
+      <td>{{ req.workflowId }}</td>
+      <td>{{ req.title }}</td>
+      <td>{{ req.status }}</td>
+      <td>{{ req.createdAt | date }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="loading">Loading requests...</div>

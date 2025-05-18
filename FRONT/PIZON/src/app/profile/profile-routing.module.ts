@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LayoutComponent } from '../profile/layout/layout.component';
+import { LayoutComponent } from './layout/layout.component';
 import { DetailsComponent } from './details/details.component';
 import { UpdateComponent } from './update/update.component';
 import { AuthGuard } from '../_helpers/auth.guard';

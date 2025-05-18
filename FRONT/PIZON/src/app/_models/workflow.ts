@@ -1,7 +1,9 @@
 export interface Workflow {
-  id?: number;
-  employeeId: number;
-  type: string;
-  details: any;              // can be typed further depending on your details structure
-  status?: string;           // optional if returned from API
+  id: string; // UUID
+  employeeId: string;
+  type: 'Onboarding' | 'Offboarding' | 'Transfer';
+  status: 'Pending' | 'In Progress' | 'Completed';
+  details: Record<string, any>;
+  createdAt: string;
+  updatedAt?: string;
 }

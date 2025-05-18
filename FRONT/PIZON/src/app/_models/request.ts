@@ -1,11 +1,11 @@
-export interface RequestItem {
-  name: string;
-  quantity: number;
-}
+import { RequestItem } from './request-item';
 
 export interface Request {
-  id?: number;
-  employeeId: number;
+  id: string; // UUID
+  employeeId: string;
   type: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
   items: RequestItem[];
+  createdAt: string;
+  updatedAt?: string;
 }

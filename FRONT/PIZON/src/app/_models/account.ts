@@ -1,12 +1,17 @@
 import { Role } from './role';
+import { Employee } from './employee';
+
 
 export interface Account {
-  id: string;
+  id: string; // UUID
   email: string;
-  password?: string;
-  firstName: string;
-  lastName: string;
+  passwordHash?: string;
   role: Role;
-  jwtToken?: string;
-  isVerified?: boolean;
+  isVerified: boolean;
+  verificationToken?: string;
+  resetToken?: string;
+  createdAt: string;
+  updatedAt: string;
+  // relations
+  employee?: Employee;
 }

@@ -1,6 +1,7 @@
 export interface Department {
-  id?: number;
+  id: string; // UUID
   name: string;
-  description: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 }
-

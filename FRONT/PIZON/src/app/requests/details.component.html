@@ -1,0 +1,16 @@
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="!loading && request">
+  <h2>Request #{{ request.id }} Details</h2>
+  <p><strong>Employee ID:</strong> {{ request.employeeId }}</p>
+  <p><strong>Type:</strong> {{ request.type }}</p>
+  <p><strong>Status:</strong> {{ request.status }}</p>
+
+  <h3>Items:</h3>
+  <ul>
+    <li *ngFor="let item of request.items">
+      {{ item.name }} (x{{ item.quantity }})
+    </li>
+  </ul>
+
+  <app-status-update [request]="request"></app-status-update>
+</div>

@@ -1,8 +1,11 @@
+import { Department } from './department';
+
 export interface Employee {
-  id?: number;               // optional for creation
+  id: string; // UUID
+  userId: string; // Account ID (FK)
   employeeId: string;
-  userId: number;
   position: string;
-  hireDate: string;          // or Date
-  departmentId: number;
+  hireDate: string;
+  departmentId: string;
+  department?: Department;
 }
