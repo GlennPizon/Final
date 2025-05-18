@@ -1,30 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RequestService } from '../_services';
-import { Request } from '../_models/';
+import { RequestService } from '../_services/request.service';
+import { AccountService } from '../_services/account.service';
+import { Role } from '../_models/role';
+import { Request } from '../_models/request';
 
 @Component({
   selector: 'app-request-details',
-  templateUrl: './details.component.html',
+  templateUrl: './details.component.html'
 })
-export class DetailsComponent implements OnInit {
-  requestId!: number;
+export class RequestDetailsComponent implements OnInit {
   request!: Request;
-  loading = true;
+  isAdmin = false;
 
   constructor(
     private route: ActivatedRoute,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private accountService: AccountService
   ) {}
 
   ngOnInit(): void {
-    this.requestId = +this.route.snapshot.paramMap.get('id')!;
-    this.requestService.getById(this.requestId).subscribe({
-      next: (data) => {
-        this.request = data;
-        this.loading = false;
-      },
-      error: () => (this.loading = false),
-    });
+    const id = this.route.snapshot.params['id'];
+    this.requestService.getById(id).subscribe(request => this.request = request);
+
+    const account = this.accountService.userValue;
+    this.isAdmin = account?.role === Role.Admin;
   }
 }

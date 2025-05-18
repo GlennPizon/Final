@@ -17,7 +17,7 @@ export class WorkflowService {
     return this.http.post(baseUrl, params);
   }
 
-  updateStatus(id: number, status: string) {
+  updateStatus(id: string, status: string) {
     return this.http.put(`${baseUrl}/${id}/status`, { status });
   }
 
@@ -26,5 +26,8 @@ export class WorkflowService {
   }
   getAll() {
     return this.http.get<Workflow[]>(baseUrl);
+  }
+  getById(id: number) {
+    return this.http.get<Workflow>(`${baseUrl}/${id}`);
   }
 }

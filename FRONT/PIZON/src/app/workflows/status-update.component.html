@@ -1,0 +1,18 @@
+<div class="card p-3 shadow-sm">
+  <h5>Update Workflow Status</h5>
+
+  <form [formGroup]="form" (ngSubmit)="updateStatus()">
+    <div class="form-group mb-3">
+      <label for="status">Status</label>
+      <select id="status" class="form-select" formControlName="status">
+        <option *ngFor="let status of statusOptions" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="submitting">
+      {{ submitting ? 'Updating...' : 'Update Status' }}
+    </button>
+  </form>
+</div>

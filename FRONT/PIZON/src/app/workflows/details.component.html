@@ -1,0 +1,15 @@
+<!-- Workflow Details -->
+<div class="card p-4 shadow-sm mb-4">
+  <h4>Workflow Details</h4>
+  <p><strong>ID:</strong> {{ workflow?.id }}</p>
+  <p><strong>Type:</strong> {{ workflow?.type }}</p>
+  <p><strong>Status:</strong> {{ workflow?.status }}</p>
+  <p><strong>Employee ID:</strong> {{ workflow?.employeeId }}</p>
+  <p><strong>Details:</strong></p>
+  <pre>{{ workflow?.details | json }}</pre>
+</div>
+
+<!-- Only show update form if user is admin -->
+<div *ngIf="isAdmin">
+  <app-workflow-status-update [workflow]="workflow"></app-workflow-status-update>
+</div>
