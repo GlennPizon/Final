@@ -6,13 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./alert.component.css']
 })
 export class AlertComponent {
-  @Input() type: 'success' | 'error' | 'info' | 'warning' = 'info';
+  @Input() type: 'success' | 'error' | 'warning' = 'success';
   @Input() message = '';
-  @Input() dismissible = true;
-
-  dismissed = false;
-
-  close(): void {
-    this.dismissed = true;
-  }
 }
