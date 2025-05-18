@@ -4,6 +4,20 @@ module.exports = model;
 
 function model(sequelize) {
     const attributes = {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
+        accountId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'accounts',
+                key: 'id'
+            }
+        },
         token: { type: DataTypes.STRING },
         expires: { type: DataTypes.DATE },
         created: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
@@ -23,8 +37,16 @@ function model(sequelize) {
 
     const options = {
         // disable default timestamp fields (createdAt and updatedAt)
-        timestamps: false
+        timestamps: false,
+        tableName: 'refreshTokens',
+        modelName: 'RefreshToken',
+        indexes: [
+            {
+                name: 'fk_refresh_token_account',
+                fields: ['accountId']
+            }
+        ]
     };
 
-    return sequelize.define('refreshToken', attributes, options);
+    return sequelize.define('RefreshToken', attributes, options);
 }

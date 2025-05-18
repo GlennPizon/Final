@@ -4,6 +4,12 @@ module.exports = model;
 
 function model(sequelize) {
     const attributes = {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
         email: { type: DataTypes.STRING, allowNull: false },
         passwordHash: { type: DataTypes.STRING, allowNull: false },
         title: { type: DataTypes.STRING, allowNull: false },
@@ -34,8 +40,10 @@ function model(sequelize) {
         scopes: {
             // include hash with this scope
             withHash: { attributes: {}, }
-        }        
+        },
+        tableName: 'accounts',
+        modelName: 'Account'
     };
 
-    return sequelize.define('account', attributes, options);
+    return sequelize.define('Account', attributes, options);
 }

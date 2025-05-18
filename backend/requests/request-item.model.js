@@ -7,7 +7,18 @@ function model(sequelize) {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
-            primaryKey: true
+            primaryKey: true,
+            allowNull: false
+        },
+        requestId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'requests',
+                key: 'id'
+            },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
         },
         name: {
             type: DataTypes.STRING,
@@ -31,10 +42,19 @@ function model(sequelize) {
     };
 
     const options = {
+        tableName: 'requestItems',
+        modelName: 'RequestItem',
+        timestamps: false,
         defaultScope: {
             attributes: { exclude: [] }
-        }
+        },
+        indexes: [
+            {
+                name: 'fk_request_item_request',
+                fields: ['requestId']
+            }
+        ]
     };
 
-    return sequelize.define('requestItem', attributes, options);
+    return sequelize.define('RequestItem', attributes, options);
 }

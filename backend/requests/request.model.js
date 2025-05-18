@@ -7,7 +7,16 @@ function model(sequelize) {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
-            primaryKey: true
+            primaryKey: true,
+            allowNull: false
+        },
+        employeeId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'employees',
+                key: 'id'
+            }
         },
         type: {
             type: DataTypes.STRING,
@@ -31,6 +40,9 @@ function model(sequelize) {
     };
 
     const options = {
+        tableName: 'requests',
+        modelName: 'Request',
+        timestamps: false,
         defaultScope: {
             attributes: { exclude: [] }
         },
@@ -40,5 +52,5 @@ function model(sequelize) {
         }
     };
 
-    return sequelize.define('request', attributes, options);
+    return sequelize.define('Request', attributes, options);
 }
