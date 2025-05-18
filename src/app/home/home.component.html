@@ -1,140 +1,108 @@
-<div class="welcome-banner">
-  <div class="welcome-card">
-    <div class="welcome-left">
-      <h2 class="welcome-title">Welcome back, {{account.firstName}}! <span class="welcome-emoji">👋</span></h2>
-      <p class="welcome-subtitle">Your digital cockpit is ready — where data meets decisions 💻</p>
-      <ul class="tech-highlights">
-        <li>🔐 Secure environment</li>
-        <li>⚙️ Automated workflows</li>
-        <li>📊 Real-time analytics</li>
-      </ul>
+<div class="dashboard-greeting">
+  <div class="dashboard-card">
+    <div class="dashboard-icon">🌌</div>
+    <h2 class="dashboard-title">System Access Granted</h2>
+    <p class="dashboard-subtext">Node α43 initialized. Command interface standing by.</p>
+    <div class="feature-grid">
+      <div class="feature">🛰 U S E R M A N A G E M E N T</div>
+      <div class="feature">🧬 S Y S T E M</div>
+      <div class="feature">🔭 C O M P U T E R S C I E N C E</div>
     </div>
-    <div class="welcome-right">
-      <div class="circuit-graphic">
-        <div class="chip">🧠</div>
-        <div class="binary">01001101<br>11001001</div>
-        <div class="lines">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
+    <div class="data-stream">
+      <div class="pulse-bar"></div>
+      <div class="pulse-bar delay-1"></div>
+      <div class="pulse-bar delay-2"></div>
     </div>
   </div>
 </div>
 
 <style>
-.welcome-banner {
+.dashboard-greeting {
   padding: 2rem;
-  background: #f0f4f8;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.welcome-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to right, #e0f2fe, #dbeafe);
-  border-radius: 20px;
-  padding: 2.5rem;
-  position: relative;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.welcome-left {
-  flex: 1 1 320px;
-  z-index: 2;
-}
-
-.welcome-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 1rem;
-}
-
-.welcome-emoji {
-  font-size: 1.8rem;
-  vertical-align: middle;
-}
-
-.welcome-subtitle {
-  font-size: 1.2rem;
-  color: #334155;
-  margin-bottom: 1.5rem;
-  font-style: italic;
-}
-
-.tech-highlights {
-  list-style: none;
-  padding-left: 0;
-  color: #475569;
-  font-size: 1rem;
-  line-height: 1.8;
-}
-
-.welcome-right {
-  flex: 1 1 300px;
-  position: relative;
+  background: #0e0e1a;
+  font-family: 'Orbitron', sans-serif;
+  color: #cbd5e1;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
 }
 
-.circuit-graphic {
-  background: rgba(255, 255, 255, 0.3);
+.dashboard-card {
+  background: radial-gradient(circle at top left, #1a1a2e, #0f0f1f);
+  padding: 3rem;
   border-radius: 20px;
-  padding: 2rem;
-  position: relative;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
   text-align: center;
-  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(6px);
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
 }
 
-.chip {
+.dashboard-icon {
   font-size: 3rem;
-  background: #1d4ed8;
-  color: white;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1rem;
-  border-radius: 50%;
+  color: #38bdf8;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #f1f5f9;
+}
+
+.dashboard-subtext {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  border-left: 3px solid #3b82f6;
+}
+
+.data-stream {
   display: flex;
-  align-items: center;
+  gap: 6px;
   justify-content: center;
 }
 
-.binary {
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  color: rgba(0, 0, 0, 0.5);
-  margin-bottom: 1rem;
+.pulse-bar {
+  width: 8px;
+  height: 40px;
+  background: #38bdf8;
+  animation: stream 1.2s infinite ease-in-out;
 }
 
-.lines span {
-  display: block;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(to right, #3b82f6, transparent);
-  margin: 4px 0;
-  border-radius: 4px;
-  animation: glow 2s infinite alternate;
+.pulse-bar.delay-1 {
+  animation-delay: 0.2s;
+}
+.pulse-bar.delay-2 {
+  animation-delay: 0.4s;
 }
 
-@keyframes glow {
-  from { opacity: 0.2; }
-  to { opacity: 1; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 1; }
 }
 
-@media (max-width: 768px) {
-  .welcome-card {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .welcome-left, .welcome-right {
-    flex: 1 1 100%;
-  }
+@keyframes stream {
+  0%, 100% { height: 20px; opacity: 0.4; }
+  50% { height: 40px; opacity: 1; }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 </style>
