@@ -1,0 +1,3 @@
+[build]
+command = "ng build --configuration=production"
+publish = "src/dist/pizon"
