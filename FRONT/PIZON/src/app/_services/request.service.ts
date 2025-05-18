@@ -25,7 +25,7 @@ export class RequestService {
     return this.http.post(baseUrl, params);
   }
 
-  update(id: number, params: any) {
+  update(id: string, params: any) {
     return this.http.put(`${baseUrl}/${id}`, params);
   }
 

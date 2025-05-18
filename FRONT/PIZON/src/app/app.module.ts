@@ -13,10 +13,11 @@ import { ModalComponent } from './_components/modal/modal.component';
 
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
+import { HomeModule } from './home/home.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent, // ✅ Only components go here
     NavbarComponent,
     ToastComponent,
     AlertComponent,
@@ -28,7 +29,8 @@ import { ErrorInterceptor } from './_helpers/error.interceptor';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HomeModule // ✅ Modules go in imports, not declarations
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './_helpers/auth.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
   // Default redirect
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   // Public routes
-  { path: 'home', loadChildren: () => import('./home/home.component').then(m => m.HomeComponent) },
+  { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
+  
 
   // Authenticated routes
   {

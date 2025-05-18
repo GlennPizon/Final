@@ -10,16 +10,17 @@ import { SubnavComponent } from './subnav.component';
 
 @NgModule({
   declarations: [
+  
+  ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AccountsRoutingModule,
     LayoutComponent,
     ListComponent,
     AddEditComponent,
     OverviewComponent,
     SubnavComponent
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    AccountsRoutingModule
   ]
 })
 export class AccountsModule {}

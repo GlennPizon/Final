@@ -8,7 +8,7 @@ import { OverviewComponent } from './overview.component';
 const routes: Routes = [
   {
     path: '',
-    component: LayoutComponent,
+    
     children: [
       { path: '', component: OverviewComponent },
       { path: 'list', component: ListComponent },
