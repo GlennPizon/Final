@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './_components/navbar/navbar.component';
-import { ToastComponent } from './_components/toast/toast.component';
-import { HomeComponent } from './home/home.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+﻿import { Component } from '@angular/core';
+
+import { AccountService } from './_services';
+import { Account, Role } from './_models';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    selector: 'app', templateUrl: 'app.component.html',
+    standalone: false
 })
 export class AppComponent {
-  title = 'PIZON';
+    Role = Role;
+    account!: Account;
+    title = 'user-management-system';
+
+    constructor(private accountService: AccountService) {
+        this.accountService.account.subscribe(x => this.account = x);
+    }
+
+    logout() {
+        this.accountService.logout();
+    }
 }
