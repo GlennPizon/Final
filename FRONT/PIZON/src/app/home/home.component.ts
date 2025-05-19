@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AccountService } from '../_services';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'] // or .scss if using SCSS
+    templateUrl: 'home.component.html',
+    standalone: false
 })
-export class HomeComponent {
-  // Add any component logic here
-  constructor() {
-    // Initialize the component here
-    console.log('Home component initialized');
-  }
+export class HomeComponent implements OnInit {
+    account: any;
 
-  
+    constructor(private accountService: AccountService) { }
+
+    ngOnInit() {
+        this.account = this.accountService.accountValue;
+    }
 }
