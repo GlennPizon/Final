@@ -11,7 +11,8 @@ import { AppRoutingModule } from '../app-routing.module';
   declarations: [HomeComponent],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    HomeComponent
   ]
 })
 export class HomeModule { }

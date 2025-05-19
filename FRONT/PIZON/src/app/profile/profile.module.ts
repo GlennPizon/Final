@@ -8,14 +8,15 @@ import { LayoutComponent } from './layout/layout.component';
 
 @NgModule({
   declarations: [
-    DetailsComponent,
-    UpdateComponent,
-    LayoutComponent
+    
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ProfileRoutingModule
+    ProfileRoutingModule,
+    DetailsComponent,
+    UpdateComponent,
+    LayoutComponent
   ]
 })
 export class ProfileModule {}

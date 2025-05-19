@@ -14,6 +14,12 @@ import { ModalComponent } from './_components/modal/modal.component';
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { HomeModule } from './home/home.module';
+import { WorkflowsModule } from './workflows/workflows.module';
+import { RequestsModule } from './requests/requests.module';
+import { ProfileModule } from './profile/profile.module';
+import { EmployeesModule } from './employees/employees.module';
+import { DepartmentsModule } from './departments/departments.module';
+import { AccountsModule } from './account';
 
 @NgModule({
   declarations: [
@@ -22,7 +28,8 @@ import { HomeModule } from './home/home.module';
     ToastComponent,
     AlertComponent,
     LoaderComponent,
-    ModalComponent
+    ModalComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -30,7 +37,15 @@ import { HomeModule } from './home/home.module';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    HomeModule // ✅ Modules go in imports, not declarations
+    // HomeModule, // ✅ Modules go in imports, not declarations
+    // WorkflowsModule,
+    // RequestsModule,
+    // ProfileModule,
+    // HomeModule,
+    // EmployeesModule,
+    // DepartmentsModule,
+    // AccountsModule,
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

@@ -8,14 +8,15 @@ import { WorkflowsLayoutComponent } from './layout.component';
 
 @NgModule({
   declarations: [
-    AddEditComponent,
-    ListComponent,
-    WorkflowsLayoutComponent
+    
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    WorkflowsRoutingModule
+    WorkflowsRoutingModule,
+    AddEditComponent,
+    ListComponent,
+    WorkflowsLayoutComponent
   ]
 })
 export class WorkflowsModule {}

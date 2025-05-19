@@ -8,14 +8,15 @@ import { RequestsLayoutComponent } from './layout.component';
 
 @NgModule({
   declarations: [
-    AddEditComponent,
-    ListComponent,
-    RequestsLayoutComponent
+    
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RequestsRoutingModule
+    RequestsRoutingModule,
+    AddEditComponent,
+    ListComponent,
+    RequestsLayoutComponent
   ]
 })
 export class RequestsModule {}
