@@ -1,9 +1,0 @@
-<div>
-  <label for="status">Update Status:</label>
-  <select id="status" [(ngModel)]="selectedStatus">
-    <option *ngFor="let status of statusOptions" [value]="status">
-      {{ status }}
-    </option>
-  </select>
-  <button (click)="updateStatus()" [disabled]="updating">Update</button>
-</div>
