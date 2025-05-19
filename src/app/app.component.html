@@ -1,0 +1,46 @@
+﻿<div class="app-container" [ngClass]="{ 'bg-dark': account }">
+    <!-- main nav -->
+    <nav class="navbar navbar-expand navbar-dark" *ngIf="account">
+        <div class="container">
+            <div class="navbar-brand">
+                <span class="text-thunder-blue">User Management</span>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item nav-link">
+                    <i class="fas fa-home me-1"></i> Home
+                </a>
+                <a routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">
+                    <i class="fas fa-user me-1"></i> Profile
+                </a>
+                <a *ngIf="account.role === Role.Admin" routerLink="/admin" routerLinkActive="active" class="nav-item nav-link">
+                    <i class="fas fa-shield-alt me-1"></i> Admin
+                </a>
+                <a *ngIf="account.role === Role.Admin" routerLink="/departments" routerLinkActive="active" class="nav-item nav-link">
+                    <i class="fas fa-building me-1"></i> Department
+                </a>
+                <a *ngIf="account.role === Role.Admin" routerLink="/employees" routerLinkActive="active" class="nav-item nav-link">
+                    <i class="fas fa-users me-1"></i> Employee
+                </a>
+                <a *ngIf="account.role === Role.Admin" routerLink="/requests" routerLinkActive="active" class="nav-item nav-link">
+                    <i class="fas fa-clipboard-list me-1"></i> Request
+                </a>
+                <a (click)="logout()" class="nav-item nav-link">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- subnav router outlet -->
+    <router-outlet name="subnav"></router-outlet>
+
+    <!-- global alert -->
+    <div class="container mt-3">
+        <alert></alert>
+    </div>
+
+    <!-- main router outlet -->
+    <div class="container mt-4">
+        <router-outlet></router-outlet>
+    </div>
+</div>
