@@ -21,7 +21,7 @@ export class WorkflowCreateComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.employeeId = this.route.snapshot.params['employeeId'];
+    this.employeeId = Number(this.route.snapshot.params['employeeId']); // Ensure correct type
 
     this.form = this.formBuilder.group({
       type: ['', Validators.required],
@@ -30,15 +30,14 @@ export class WorkflowCreateComponent implements OnInit {
   }
 
   get f() { return this.form.controls; }
-  // remove json validator
 
   onSubmit() {
     if (this.form.invalid) return;
 
     const workflow = {
       employeeId: this.employeeId,
-      type: this.form.value.type,
-      details: this.form.value.details
+      type: this.form.value['type'], // Use bracket notation for safe access
+      details: this.form.value['details'] || '{}' // Ensure valid JSON format
     };
 
     this.workflowService.create(workflow)
@@ -47,7 +46,7 @@ export class WorkflowCreateComponent implements OnInit {
           this.alertService.success('Workflow created successfully', { keepAfterRouteChange: true });
           this.router.navigate(['/workflows', this.employeeId]);
         },
-        error: error => this.alertService.error(error)
+        error: (error) => this.alertService.error(error)
       });
   }
 }
