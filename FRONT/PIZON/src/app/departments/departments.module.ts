@@ -1,15 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AddEditComponent, ListComponent } from '../account';
-
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { DepartmentsRoutingModule } from './departments-routing.module';
+import { DepartmentListComponent } from './list.component';
+import { DepartmentAddEditComponent } from './add-edit.component';
 
 @NgModule({
-  declarations: [],
   imports: [
     CommonModule,
-    AddEditComponent,
-    ListComponent
+    ReactiveFormsModule,
+    DepartmentsRoutingModule
+  ],
+  declarations: [
+    DepartmentListComponent,
+    DepartmentAddEditComponent
   ]
 })
 export class DepartmentsModule { }
