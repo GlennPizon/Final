@@ -1,24 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../../_services';
-import { Account } from '../../_models';
 
 @Component({
-  selector: 'app-profile-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css']
+    templateUrl: 'details.component.html',
+    standalone: false
 })
-export class DetailsComponent implements OnInit, OnDestroy {
-  account?: Account;
-  private subscription: any;
+export class DetailsComponent implements OnInit {
+    account: any;
 
-  constructor(private accountService: AccountService) {}
+    constructor(private accountService: AccountService) { }
 
-  ngOnInit(): void {
-    this.subscription = this.accountService.account.subscribe(x => this.account = x ?? undefined);
-  }
-
-  ngOnDestroy() {
-      // unsubscribe to ensure no memory leaks
-      this.subscription.unsubscribe();
-  }
+    ngOnInit() {
+        this.account = this.accountService.accountValue;
+    }
 }

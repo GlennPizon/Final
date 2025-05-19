@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 import { ProfileRoutingModule } from './profile-routing.module';
+import { LayoutComponent } from './layout/layout.component';
 import { DetailsComponent } from './details/details.component';
 import { UpdateComponent } from './update/update.component';
-import { LayoutComponent } from './layout/layout.component';
 
 @NgModule({
-  declarations: [
-    
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ProfileRoutingModule,
-    DetailsComponent,
-    UpdateComponent,
-    LayoutComponent
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        ProfileRoutingModule
+    ],
+    declarations: [
+        LayoutComponent,
+        DetailsComponent,
+        UpdateComponent
+    ]
 })
-export class ProfileModule {}
+export class ProfileModule { }

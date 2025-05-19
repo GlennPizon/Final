@@ -1,62 +1,86 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AccountService } from '../../_services/account.service';
-import { AlertService } from '../../_services/alert.service';
-import { Account } from '../../_models';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { first } from 'rxjs/operators';
+
+import { AccountService, AlertService } from '../../_services';
+import { MustMatch } from '../../_helpers';
 
 @Component({
-  selector: 'app-profile-update',
-  templateUrl: './update.component.html',
-  styleUrls: ['./update.component.css']
+    templateUrl: 'update.component.html',
+    standalone: false
 })
 export class UpdateComponent implements OnInit {
-  form!: FormGroup;
-  loading = false;
-  submitted = false;
+    account: any;
+    form!: UntypedFormGroup;
+    loading = false;
+    submitted = false;
+    deleting = false;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private accountService: AccountService,
-    private alertService: AlertService
-  ) {}
+    constructor(
+        private formBuilder: UntypedFormBuilder,
+        private route: ActivatedRoute,
+        private router: Router,
+        private accountService: AccountService,
+        private alertService: AlertService
+    ) { }
 
-  ngOnInit(): void {
-    const account: Account | null = this.accountService.userValue;
+    ngOnInit() {
+        this.account = this.accountService.accountValue;
 
-    if (!account) {
-      this.alertService.error('User account not found.');
-      return;
+        this.form = this.formBuilder.group({
+            title: [this.account?.title || '', Validators.required],
+            firstName: [this.account?.firstName || '', Validators.required],
+            lastName: [this.account?.lastName || '', Validators.required],
+            email: [this.account?.email || '', [Validators.required, Validators.email]],
+            password: ['', [Validators.minLength(6)]],
+            confirmPassword: ['']
+        }, {
+            validator: MustMatch('password', 'confirmPassword')
+        });
     }
 
-    this.form = this.formBuilder.group({
-      firstName: [account.firstname, Validators.required],
-      lastName: [account.lastname, Validators.required],
-      email: [{ value: account.email, disabled: true }],
-      password: ['', Validators.minLength(6)]
-    });
-  }
+    // convenience getter for easy access to form fields
+    get f() { return this.form.controls; }
 
-  get f() {
-    return this.form.controls;
-  }
+    onSubmit() {
+        this.submitted = true;
+        this.alertService.clear();
 
-  onSubmit(): void {
-    if (this.submitted || this.loading || this.form.invalid) return; // Prevent multiple submissions
+        if (this.form.invalid) {
+            return;
+        }
 
-    this.submitted = true;
-    this.loading = true;
-    this.alertService.clear();
+        this.loading = true;
+        this.accountService.update(this.account?.id, this.form.value)
+            .pipe(first())
+            .subscribe({
+                next: () => {
+                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    this.router.navigate(['../'], { relativeTo: this.route });
+                },
+                error: error => {
+                    this.alertService.error(error);
+                    this.loading = false;
+                }
+            });
+    }
 
-    this.accountService.update(parseInt(this.accountService.userValue!.id), this.form.getRawValue()).subscribe({
-      next: () => {
-        this.alertService.success('Profile updated successfully!', { autoClose: true });
-        this.loading = false;
-      },
-      error: error => {
-        const errorMsg = error?.message || 'Failed to update profile. Please try again.';
-        this.alertService.error(errorMsg);
-        this.loading = false;
-      }
-    });
-  }
+    onDelete() {
+        if (confirm('Are you sure?')) {
+            this.deleting = true;
+            this.accountService.delete(this.account?.id)
+                .pipe(first())
+                .subscribe({
+                    next: () => {
+                        this.alertService.success('Account deleted successfully', { keepAfterRouteChange: true });
+                        this.router.navigate(['/']);
+                    },
+                    error: error => {
+                        this.alertService.error(error);
+                        this.deleting = false;
+                    }
+                });
+        }
+    }
 }
