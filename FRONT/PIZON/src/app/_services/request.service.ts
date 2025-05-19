@@ -20,7 +20,7 @@ export class RequestService {
         return this.http.get<any>(`${environment.apiUrl}/requests/${id}`);
     }
 
-    create(request) {
+    create(request: any) {
         // Use the HTTP POST to create the request
         return this.http.post<any>(`${environment.apiUrl}/requests`, request).pipe(
             // After the request is created successfully, track it
@@ -43,7 +43,7 @@ export class RequestService {
         );
     }
 
-    update(id: number, request) {
+    update(id: number, request:any) {
         // First get the current request data to check for status changes
         return this.getById(id).pipe(
             switchMap(currentRequest => {
