@@ -1,16 +1,21 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { WorkflowsLayoutComponent } from './layout.component';
+import { Routes, RouterModule } from '@angular/router';
 import { ListComponent } from './list.component';
-import { AddEditComponent } from './add-edit.component';
-import { AuthGuard } from '../_helpers';
+import { WorkflowCreateComponent } from './create.component';
+import { AuthGuard } from '../_helpers/auth.guard';
+import { Role } from '../_models/role';
 
 const routes: Routes = [
   {
-    path: '', component: WorkflowsLayoutComponent, canActivate: [AuthGuard], children: [
-      { path: '', component: ListComponent },
-      { path: 'add', component: AddEditComponent }
-    ]
+    path: ':employeeId',
+    component: ListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: ':employeeId/create',
+    component: WorkflowCreateComponent,
+    canActivate: [AuthGuard],
+    data: { roles: [Role.Admin] }
   }
 ];
 
@@ -18,4 +23,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class WorkflowsRoutingModule {}
+export class WorkflowsRoutingModule { }

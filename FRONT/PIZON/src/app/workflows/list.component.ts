@@ -1,26 +1,38 @@
+
 import { Component, OnInit } from '@angular/core';
-import { WorkflowService } from '../_services';
-import { Workflow } from '../_models';
+import { ActivatedRoute } from '@angular/router';
+import { WorkflowService } from '../_services/workflow.service';
+import { AlertService } from '../_services/alert.service';
 
 @Component({
-  selector: 'app-workflow-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.css']
+  templateUrl: 'list.component.html',
+  standalone: false
 })
 export class ListComponent implements OnInit {
-  workflows: Workflow[] = [];
-  loading = false;
+  employeeId!: number;
+  workflows: any[] = [];
 
-  constructor(private workflowService: WorkflowService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private workflowService: WorkflowService,
+    private alertService: AlertService
+  ) { }
 
-  ngOnInit(): void {
-    this.loading = true;
-    this.workflowService.getAll().subscribe({
-      next: (data) => {
-        this.workflows = data;
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+  ngOnInit() {
+    this.employeeId = this.route.snapshot.params['employeeId'];
+    this.workflowService.getByEmployeeId(this.employeeId)
+      .subscribe(workflows => this.workflows = workflows);
+  }
+
+  updateStatus(id: number, status: string) {
+    this.workflowService.updateStatus(id, status)
+      .subscribe({
+        next: () => {
+          this.alertService.success(`Workflow ${status} successfully`);
+          this.workflowService.getByEmployeeId(this.employeeId)
+            .subscribe(workflows => this.workflows = workflows);
+        },
+        error: error => this.alertService.error(error)
+      });
   }
 }
