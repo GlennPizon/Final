@@ -1,28 +1,47 @@
 const { DataTypes } = require('sequelize');
 
-module.exports = (sequelize) => {
-  const Department = sequelize.define('Department', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    }
-  }, {
-    timestamps: true
-  });
+module.exports = model;
 
-  Department.associate = (models) => {
-    Department.hasMany(models.Employee, { foreignKey: 'departmentId', as: 'employees' });
-  };
+function model(sequelize) {
+    const attributes = {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
+        name: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+            unique: true
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        created: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW
+        },
+        updated: {
+            type: DataTypes.DATE,
+            allowNull: true
+        }
+    };
 
-  return Department;
-};
+    const options = {
+        tableName: 'departments',
+        modelName: 'Department',
+        timestamps: false,
+        indexes: [
+            {
+                name: 'name_unique',
+                unique: true,
+                fields: ['name']
+            }
+        ]
+    };
+
+    return sequelize.define('Department', attributes, options);
+}

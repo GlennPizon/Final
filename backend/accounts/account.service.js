@@ -25,39 +25,76 @@ module.exports = {
 };
 
 async function authenticate({ email, password, ipAddress }) {
-    const account = await db.Account.scope('withHash').findOne({ where: { email } });
+    try {
+        // Find account with password hash
+        const account = await db.Account.scope('withHash').findOne({
+            where: { email }
+        });
 
-    if (!account) {
-        throw 'Email does not exist';
-    }
-
-    if (!(await bcrypt.compare(password, account.passwordHash))) {
-        throw 'Password is incorrect';
-    }
-
-    if (account.id !== 1) {
-        if (!account.isVerified) {
-            throw 'Email is not verified';
+        if (!account) {
+            throw 'Email or password is incorrect';
         }
-    
-        if (!account || account.status !== 'Active') {
-            throw 'Account is InActive. Please contact system administrator!';
+
+        // Verify password
+        const isValidPassword = await bcrypt.compare(password, account.passwordHash);
+        if (!isValidPassword) {
+            console.log('Password verification failed for:', email);
+            throw 'Email or password is incorrect';
         }
+
+        // For admin account (id=1), skip verification check
+        if (account.id !== 1 && !account.isVerified) {
+            throw 'Please verify your email before logging in';
+        }
+
+        // Generate JWT token
+        const jwtToken = jwt.sign(
+            { 
+                sub: account.id, 
+                id: account.id,
+                email: account.email,
+                role: account.role,
+                isSuperAdmin: account.isSuperAdmin
+            },
+            config.secret,
+            { expiresIn: '15m' }
+        );
+
+        // Generate refresh token
+        const refreshTokenString = crypto.randomBytes(40).toString('hex');
+        
+        try {
+            // Create and save refresh token
+            const refreshToken = await db.RefreshToken.create({
+                accountId: account.id,
+                token: refreshTokenString,
+                expires: new Date(Date.now() + 7*24*60*60*1000),
+                createdByIp: ipAddress
+            });
+
+            if (!refreshToken) {
+                throw new Error('Failed to create refresh token');
+            }
+
+            // Return account details and tokens
+            return {
+                id: account.id,
+                email: account.email,
+                firstName: account.firstName,
+                lastName: account.lastName,
+                role: account.role,
+                isVerified: account.isVerified,
+                token: jwtToken,                    // JWT token for Angular frontend
+                refreshToken: refreshTokenString    // Refresh token for cookie
+            };
+        } catch (tokenError) {
+            console.error('Error creating refresh token:', tokenError);
+            throw 'Authentication failed - token creation error';
+        }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        throw error;
     }
-
-    // authentication successful so generate jwt and refresh tokens
-    const jwtToken = generateJwtToken(account);
-    const refreshToken = generateRefreshToken(account, ipAddress);
-
-    // save refresh token
-    await refreshToken.save();
-
-    // return basic details and tokens
-    return {
-        ...basicDetails(account),
-        jwtToken,
-        refreshToken: refreshToken.token
-    };
 }
 
 async function refreshToken({ token, ipAddress }) {
@@ -241,15 +278,23 @@ async function hash(password) {
 }
 
 function generateJwtToken(account) {
-    // create a jwt token containing the account id that expires in 15 minutes
-    return jwt.sign({ sub: account.id, id: account.id }, config.secret, { expiresIn: '15m' });
+    return jwt.sign(
+        { 
+            sub: account.id, 
+            id: account.id,
+            email: account.email,
+            role: account.role,
+            isSuperAdmin: account.isSuperAdmin
+        },
+        config.secret,
+        { expiresIn: '15m' }
+    );
 }
 
 function generateRefreshToken(account, ipAddress) {
-    // create a refresh token that expires in 7 days
     return new db.RefreshToken({
         accountId: account.id,
-        token: randomTokenString(),
+        token: crypto.randomBytes(40).toString('hex'),
         expires: new Date(Date.now() + 7*24*60*60*1000),
         createdByIp: ipAddress
     });
@@ -260,8 +305,28 @@ function randomTokenString() {
 }
 
 function basicDetails(account) {
-    const { id, title, firstName, lastName, email, role, created, updated, isVerified, verificationToken, status } = account;
-    return { id, title, firstName, lastName, email, role, created, updated, isVerified, verificationToken, status };
+    const { 
+        id, 
+        title, 
+        firstName, 
+        lastName, 
+        email, 
+        role, 
+        created, 
+        updated, 
+        isVerified 
+    } = account;
+    return { 
+        id, 
+        title, 
+        firstName, 
+        lastName, 
+        email, 
+        role, 
+        created, 
+        updated, 
+        isVerified 
+    };
 }
 
 async function sendVerificationEmail(account, origin) {

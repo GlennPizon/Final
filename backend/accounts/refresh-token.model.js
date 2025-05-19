@@ -16,15 +16,39 @@ function model(sequelize) {
             references: {
                 model: 'accounts',
                 key: 'id'
-            }
+            },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
         },
-        token: { type: DataTypes.STRING },
-        expires: { type: DataTypes.DATE },
-        created: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-        createdByIp: { type: DataTypes.STRING },
-        revoked: { type: DataTypes.DATE },
-        revokedByIp: { type: DataTypes.STRING },
-        replacedByToken: { type: DataTypes.STRING },
+        token: { 
+            type: DataTypes.STRING(255),
+            allowNull: false 
+        },
+        expires: { 
+            type: DataTypes.DATE,
+            allowNull: false 
+        },
+        created: { 
+            type: DataTypes.DATE, 
+            allowNull: false, 
+            defaultValue: DataTypes.NOW 
+        },
+        createdByIp: { 
+            type: DataTypes.STRING,
+            allowNull: true 
+        },
+        revoked: { 
+            type: DataTypes.DATE,
+            allowNull: true 
+        },
+        revokedByIp: { 
+            type: DataTypes.STRING,
+            allowNull: true 
+        },
+        replacedByToken: { 
+            type: DataTypes.STRING(255),
+            allowNull: true 
+        },
         isExpired: {
             type: DataTypes.VIRTUAL,
             get() { return Date.now() >= this.expires; }
@@ -36,14 +60,20 @@ function model(sequelize) {
     };
 
     const options = {
-        // disable default timestamp fields (createdAt and updatedAt)
-        timestamps: false,
         tableName: 'refreshTokens',
         modelName: 'RefreshToken',
+        timestamps: false,
         indexes: [
             {
                 name: 'fk_refresh_token_account',
-                fields: ['accountId']
+                fields: ['accountId'],
+                using: 'BTREE'
+            },
+            {
+                name: 'idx_token',
+                fields: ['token'],
+                unique: true,
+                using: 'BTREE'
             }
         ]
     };

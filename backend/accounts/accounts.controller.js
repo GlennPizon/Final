@@ -16,6 +16,7 @@ router.post('/verify-email', verifyEmailSchema, verifyEmail);
 router.post('/forgot-password', forgotPasswordSchema, forgotPassword);
 router.post('/validate-reset-token', validateResetTokenSchema, validateResetToken);
 router.post('/reset-password', resetPasswordSchema, resetPassword);
+router.get('/all', getAll);
 router.get('/', authorize(Role.Admin), getAll);
 router.get('/user', authorize(Role.User), getAll);
 router.get('/:id', authorize(), getById);
@@ -27,8 +28,8 @@ module.exports = router;
 
 function authenticateSchema(req, res, next) {
     const schema = Joi.object({
-        email: Joi.string().required(),
-        password: Joi.string().required()
+        email: Joi.string().required().email(),
+        password: Joi.string().required().min(6)
     });
     validateRequest(req, next, schema);
 }
@@ -36,13 +37,34 @@ function authenticateSchema(req, res, next) {
 function authenticate(req, res, next) {
     const { email, password } = req.body;
     const ipAddress = req.ip;
+    
+    console.log('Authentication attempt:', { email, ipAddress });
+    
     accountService.authenticate({ email, password, ipAddress })
-        .then(({ refreshToken, ...account }) => {
+        .then(({ refreshToken, token, ...account }) => {
+            console.log('Authentication successful for:', email);
+            // Set refresh token in HTTP-only cookie
             setTokenCookie(res, refreshToken);
-            // res.json(account);
-            res.json({ ...account, refreshToken: refreshToken }); // Send token in body too
+            
+            // Return account details and JWT token
+            res.json({
+                ...account,
+                token    // JWT token for Angular frontend
+            });
         })
-        .catch(next);
+        .catch(error => {
+            console.error('Authentication error:', {
+                email,
+                error: error.message,
+                stack: error.stack
+            });
+            
+            // Return consistent error format
+            res.status(400).json({ 
+                error: typeof error === 'string' ? error : 'Authentication failed',
+                details: error.message
+            });
+        });
 }
 
 function refreshToken(req, res, next) {
@@ -94,12 +116,33 @@ function registerSchema(req, res, next) {
 }
 
 function register(req, res, next) {
+    console.log('Registration attempt:', {
+        email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName
+    });
+    
     accountService.register(req.body, req.get('origin'))
-        .then(account => res.json({ 
-            message: 'Registration successful, please check your email for verification instructions', 
-            verificationToken: account.verificationToken 
-        }))
-        .catch(next);
+        .then(account => {
+            console.log('Registration successful for:', req.body.email);
+            res.json({ 
+                message: 'Registration successful, please check your email for verification instructions', 
+                verificationToken: account.verificationToken 
+            });
+        })
+        .catch(error => {
+            console.error('Registration error:', {
+                email: req.body.email,
+                error: error.message,
+                stack: error.stack
+            });
+            
+            // Return consistent error format
+            res.status(400).json({
+                error: 'Registration failed',
+                details: error.message
+            });
+        });
 }
 
 function verifyEmailSchema(req, res, next) {
@@ -238,10 +281,13 @@ function _delete(req, res, next) {
 // helper functions
 
 function setTokenCookie(res, token) {
-    // create cookie with refresh token that expires in 7 days
     const cookieOptions = {
         httpOnly: true,
-        expires: new Date(Date.now() + 7*24*60*60*1000)
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        expires: new Date(Date.now() + 7*24*60*60*1000), // 7 days
+        domain: process.env.NODE_ENV === 'production' ? process.env.DOMAIN : 'localhost'
     };
     res.cookie('refreshToken', token, cookieOptions);
 }

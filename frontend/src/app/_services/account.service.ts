@@ -1,8 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { map, finalize, catchError } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Account } from '../_models';
@@ -18,7 +18,7 @@ export class AccountService {
         private router: Router,
         private http: HttpClient
     ) {
-        this.accountSubject = new BehaviorSubject<Account>(JSON.parse(localStorage.getItem('account') ?? 'null'));
+        this.accountSubject = new BehaviorSubject<Account>(null);
         this.account = this.accountSubject.asObservable();
     }
 
@@ -26,29 +26,50 @@ export class AccountService {
         return this.accountSubject.value;
     }
 
+    setFakeAdmin(fakeAdmin: Account) {
+        this.accountSubject.next(fakeAdmin);
+    }
+
     login(email: string, password: string) {
         return this.http.post<any>(`${baseUrl}/authenticate`, { email, password }, { withCredentials: true })
-            .pipe(map(account => {
-                this.accountSubject.next(account);
-                this.startRefreshTokenTimer();
-                return account;
-            }));
+            .pipe(
+                map(account => {
+                    // store account details and jwt token in local storage to keep user logged in between page refreshes
+                    localStorage.setItem('account', JSON.stringify(account));
+                    this.accountSubject.next(account);
+                    this.startRefreshTokenTimer();
+                    return account;
+                }),
+                catchError(error => {
+                    console.error('Login error:', error);
+                    return throwError(() => error.error?.message || 'Login failed. Please check your credentials.');
+                })
+            );
     }
 
     logout() {
+        // revoke token, stop refresh timer, remove account from local storage and redirect to login page
         this.http.post<any>(`${baseUrl}/revoke-token`, {}, { withCredentials: true }).subscribe();
         this.stopRefreshTokenTimer();
-        this.accountSubject.next(null as any);
+        localStorage.removeItem('account');
+        this.accountSubject.next(null);
         this.router.navigate(['/account/login']);
     }
 
     refreshToken() {
         return this.http.post<any>(`${baseUrl}/refresh-token`, {}, { withCredentials: true })
-            .pipe(map((account) => {
-                this.accountSubject.next(account);
-                this.startRefreshTokenTimer();
-                return account;
-            }));
+            .pipe(
+                map(account => {
+                    this.accountSubject.next(account);
+                    this.startRefreshTokenTimer();
+                    return account;
+                }),
+                catchError(error => {
+                    console.error('Token refresh error:', error);
+                    this.logout();
+                    return throwError(() => error.error?.message || 'Token refresh failed');
+                })
+            );
     }
 
     register(account: Account) {
@@ -113,20 +134,23 @@ export class AccountService {
 
     private startRefreshTokenTimer() {
         // parse json object from base64 encoded jwt token
-        if(this.accountValue && this.accountValue.jwtToken){
-            const jwtToken = JSON.parse(atob(this.accountValue.jwtToken.split('.')[1]));
-            if (jwtToken && jwtToken.exp) {
-                // set a timeout to refresh the token a minute before it expires
-                const expires = new Date(jwtToken.exp * 1000);
-                const timeout = expires.getTime() - Date.now() - (60 * 1000);
-                this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
-            } else {
-                console.error('Invalid JWT token or missing expiration time.');
+        if (this.accountValue?.token) {
+            try {
+                const jwtToken = JSON.parse(atob(this.accountValue.token.split('.')[1]));
+                if (jwtToken && jwtToken.exp) {
+                    // set a timeout to refresh the token a minute before it expires
+                    const expires = new Date(jwtToken.exp * 1000);
+                    const timeout = expires.getTime() - Date.now() - (60 * 1000);
+                    this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+                } else {
+                    console.error('Invalid JWT token or missing expiration time.');
+                    this.logout();
+                }
+            } catch (error) {
+                console.error('Error parsing JWT token:', error);
                 this.logout();
             }
-        }else{
         }
-        
     }
 
     private stopRefreshTokenTimer() {

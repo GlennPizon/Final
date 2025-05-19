@@ -10,39 +10,129 @@ function model(sequelize) {
             autoIncrement: true,
             allowNull: false
         },
-        email: { type: DataTypes.STRING, allowNull: false },
-        passwordHash: { type: DataTypes.STRING, allowNull: false },
-        title: { type: DataTypes.STRING, allowNull: false },
-        firstName: { type: DataTypes.STRING, allowNull: false },
-        lastName: { type: DataTypes.STRING, allowNull: false },
-        acceptTerms: { type: DataTypes.BOOLEAN },
-        role: { type: DataTypes.STRING, allowNull: false },
-        verificationToken: { type: DataTypes.STRING },
-        verified: { type: DataTypes.DATE },
-        resetToken: { type: DataTypes.STRING },
-        resetTokenExpires: { type: DataTypes.DATE },
-        passwordReset: { type: DataTypes.DATE },
-        created: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-        updated: { type: DataTypes.DATE },
+        email: { 
+            type: DataTypes.STRING, 
+            allowNull: false,
+            unique: true 
+        },
+        passwordHash: { 
+            type: DataTypes.STRING, 
+            allowNull: false 
+        },
+        title: { 
+            type: DataTypes.STRING, 
+            allowNull: false 
+        },
+        firstName: { 
+            type: DataTypes.STRING, 
+            allowNull: false 
+        },
+        lastName: { 
+            type: DataTypes.STRING, 
+            allowNull: false 
+        },
+        acceptTerms: { 
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
+        role: { 
+            type: DataTypes.STRING, 
+            allowNull: false 
+        },
+        isSuperAdmin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        verificationToken: { 
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        verified: { 
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        resetToken: { 
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        resetTokenExpires: { 
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        passwordReset: { 
+            type: DataTypes.DATE,
+            allowNull: true
+        },
+        created: { 
+            type: DataTypes.DATE, 
+            allowNull: false, 
+            defaultValue: DataTypes.NOW 
+        },
+        updated: { 
+            type: DataTypes.DATE,
+            allowNull: true
+        },
         isVerified: {
             type: DataTypes.VIRTUAL,
-            get() { return !!(this.verified || this.passwordReset); }
+            get() { 
+                // For admin account or super admin, always return true
+                if (this.role === 'Admin' || this.isSuperAdmin) return true;
+                // For others, check verification
+                return !!(this.verified || this.passwordReset); 
+            }
+        },
+        permissions: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                const basePermissions = {
+                    canViewUsers: false,
+                    canManageUsers: false,
+                    canViewDepartments: false,
+                    canManageDepartments: false,
+                    canViewRequests: false,
+                    canManageRequests: false,
+                    canAccessAdminPanel: false,
+                    canManageSystem: false,
+                    canViewAuditLogs: false
+                };
+
+                if (this.role === 'Admin' || this.isSuperAdmin) {
+                    return Object.keys(basePermissions).reduce((acc, key) => {
+                        acc[key] = true;
+                        return acc;
+                    }, {});
+                }
+
+                return basePermissions;
+            }
         }
     };
 
     const options = {
-        // disable default timestamp fields (createdAt and updatedAt)
-        timestamps: false, 
+        timestamps: false,
         defaultScope: {
-            // exclude password hash by default
-            attributes: { exclude: ['passwordHash'] }
+            // By default, exclude the password hash
+            attributes: { 
+                exclude: ['passwordHash'] 
+            }
         },
         scopes: {
-            // include hash with this scope
-            withHash: { attributes: {}, }
+            // When using withHash scope, include all attributes
+            withHash: { 
+                attributes: {
+                    include: ['passwordHash']
+                }
+            }
         },
         tableName: 'accounts',
-        modelName: 'Account'
+        modelName: 'Account',
+        indexes: [
+            {
+                name: 'email_unique',
+                unique: true,
+                fields: ['email']
+            }
+        ]
     };
 
     return sequelize.define('Account', attributes, options);

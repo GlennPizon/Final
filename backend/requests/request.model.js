@@ -16,14 +16,16 @@ function model(sequelize) {
             references: {
                 model: 'employees',
                 key: 'id'
-            }
+            },
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE'
         },
         type: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(255),
             allowNull: false
         },
         status: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'),
             allowNull: false,
             defaultValue: 'Pending'
         },
@@ -34,8 +36,7 @@ function model(sequelize) {
         },
         updated: {
             type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW
+            allowNull: true
         }
     };
 
@@ -46,10 +47,13 @@ function model(sequelize) {
         defaultScope: {
             attributes: { exclude: [] }
         },
-        scopes: {
-            // include hash with this scope
-            withHash: { attributes: {}, }
-        }
+        indexes: [
+            {
+                name: 'fk_request_employee',
+                fields: ['employeeId'],
+                using: 'BTREE'
+            }
+        ]
     };
 
     return sequelize.define('Request', attributes, options);

@@ -1,6 +1,6 @@
-const { expressjwt } = require('express-jwt');
-const config = require('../config'); // Use the centralized config
-const db = require('../_helpers/db');
+const { expressjwt: jwt } = require('express-jwt');
+const { secret } = require('config.json');
+const db = require('_helpers/db');
 
 module.exports = authorize;
 
@@ -11,54 +11,88 @@ function authorize(roles = []) {
         roles = [roles];
     }
 
-    // Ensure config.secret is loaded correctly
-    if (!config.secret) {
-        console.error("FATAL ERROR: JWT_SECRET is not set in the environment variables or config.");
-        process.exit(1);
-    }
+    console.log('Authorizing roles:', roles);
 
     return [
         // authenticate JWT token and attach user to request object (req.user)
-        // Use expressjwt({ config }) to CREATE the middleware
-        expressjwt({ secret: config.secret, algorithms: ['HS256'] }),
+        jwt({ secret, algorithms: ['HS256'] }),
 
-        // 2. Authorize based on user role and attach full user object to req.user
+        // authorize based on user role
         async (req, res, next) => {
-            try { // Good practice to wrap async operations in try...catch
-                // Check if req.auth exists (it should if expressjwt succeeded)
-                if (!req.auth || !req.auth.id) {
-                    // This case should ideally not happen if JWT is valid and contains id
-                    console.error('Authorization Error: req.auth or req.auth.id missing after JWT validation.');
+            try {
+                console.log('JWT decoded user:', req.user);
+                const account = await db.Account.findByPk(req.user.id);
+                console.log('Found account:', account ? {
+                    id: account.id,
+                    email: account.email,
+                    role: account.role,
+                    isVerified: account.isVerified
+                } : 'null');
+                
+                if (!account || (roles.length && !roles.includes(account.role))) {
+                    console.log('Authorization failed:', {
+                        accountExists: !!account,
+                        requiredRoles: roles,
+                        userRole: account?.role
+                    });
+                    // account no longer exists or role not authorized
                     return res.status(401).json({ message: 'Unauthorized' });
                 }
 
-                // Fetch the full account details from DB using the ID from the token payload (req.auth.id)
-                const account = await db.Account.findByPk(req.auth.id); // <-- Use req.auth.id here
-
-                if (!account) {
-                    // Account associated with token no longer exists in DB
-                    return res.status(401).json({ message: 'Unauthorized' });
+                // Check if user is verified (admins are auto-verified)
+                if (!account.isVerified) {
+                    console.log('Account not verified:', account.email);
+                    return res.status(401).json({ message: 'Account not verified' });
                 }
 
-                if (roles.length && !roles.includes(account.role)) {
-                    // Account exists but role is not authorized for this route
-                    return res.status(401).json({ message: 'Unauthorized' });
+                // Add user and permissions to request
+                req.user = {
+                    ...req.user,
+                    role: account.role,
+                    isSuperAdmin: account.isSuperAdmin,
+                    permissions: account.permissions
+                };
+
+                console.log('Authorization successful:', {
+                    role: account.role,
+                    isSuperAdmin: account.isSuperAdmin,
+                    path: req.path
+                });
+
+                // Admin or super admin bypass role checks
+                if (account.role === 'Admin' || account.isSuperAdmin) {
+                    return next();
                 }
 
-                // Authentication and authorization successful.
-                // Attach the fetched account object (or its plain version) to req.user for downstream use.
-                req.user = account.get(); // Use .get() for a plain JS object if needed by other parts
+                // Check specific permissions if needed
+                if (req.method === 'GET') {
+                    // Read operations
+                    if (req.path.includes('/users') && !account.permissions.canViewUsers) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                    if (req.path.includes('/departments') && !account.permissions.canViewDepartments) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                    if (req.path.includes('/requests') && !account.permissions.canViewRequests) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                } else {
+                    // Write operations
+                    if (req.path.includes('/users') && !account.permissions.canManageUsers) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                    if (req.path.includes('/departments') && !account.permissions.canManageDepartments) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                    if (req.path.includes('/requests') && !account.permissions.canManageRequests) {
+                        return res.status(403).json({ message: 'Forbidden - Insufficient permissions' });
+                    }
+                }
 
-                // Attach helper methods like ownsToken to the newly populated req.user
-                const refreshTokens = await account.getRefreshTokens(); // Use the fetched account instance
-                req.user.ownsToken = token => !!refreshTokens.find(x => x.token === token);
-
-                // Proceed to the next middleware or route handler
                 next();
-
             } catch (error) {
-                // Pass any database or other unexpected errors to the global error handler
-                next(error);
+                console.error('Authorization error:', error);
+                return res.status(500).json({ message: 'Internal server error during authorization' });
             }
         }
     ];
