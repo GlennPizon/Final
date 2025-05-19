@@ -1,0 +1,10 @@
+{
+    "development": {
+      "username": "u875409848_cudillo",
+      "password": "9T2Z5$3UKkgSYzE",      
+      "database": "u875409848_cudillo",
+      "host": "153.92.15.31",
+      "dialect": "mysql"
+    }
+  }
+  
