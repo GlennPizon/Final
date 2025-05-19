@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DepartmentService } from '../_services/department.service';
 
 @Component({
-  templateUrl: 'department-list.component.html',
+  templateUrl: 'list.component.html',
   standalone: false
 })
 export class DepartmentListComponent implements OnInit {

@@ -12,17 +12,19 @@ import { AccountService } from './_services';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './_components';
 import { HomeComponent } from './home';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
     imports: [
         BrowserModule,
         ReactiveFormsModule,
         HttpClientModule,
-        AppRoutingModule
+        AppRoutingModule,
+        CommonModule,
+        AlertComponent
     ],
     declarations: [
         AppComponent,
-        AlertComponent,
         HomeComponent
     ],
     providers: [

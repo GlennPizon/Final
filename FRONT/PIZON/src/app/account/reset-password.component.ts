@@ -32,7 +32,7 @@ export class ResetPasswordComponent implements OnInit {
         private alertService: AlertService
     ) { }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.form = this.formBuilder.group({
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required],
@@ -45,7 +45,10 @@ export class ResetPasswordComponent implements OnInit {
 
         // remove token from url to prevent http referer leakage
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
-        if (!token) return this.tokenStatus = TokenStatus.Invalid;
+        if (!token) {
+            this.tokenStatus = TokenStatus.Invalid;
+            return;
+        }
 
         this.accountService.validateResetToken(token)
             .pipe(first())

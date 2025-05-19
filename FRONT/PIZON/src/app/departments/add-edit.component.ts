@@ -5,7 +5,7 @@ import { DepartmentService } from '../_services/department.service';
 import { AlertService } from '../_services/alert.service';
 
 @Component({
-  templateUrl: 'department-add-edit.component.html',
+  templateUrl: 'add-edit.component.html',
   standalone: false
 })
 export class DepartmentAddEditComponent implements OnInit {
@@ -22,7 +22,7 @@ export class DepartmentAddEditComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.id = this.route.snapshot.params['id'];
+    this.id = Number(this.route.snapshot.params['id']);
     this.isAddMode = !this.id;
 
     this.form = this.formBuilder.group({

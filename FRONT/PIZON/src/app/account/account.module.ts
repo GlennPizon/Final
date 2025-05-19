@@ -14,17 +14,16 @@ import { VerifyEmailComponent } from './verify-email.component';
   declarations: [
     LayoutComponent,
     ForgotPasswordComponent,
-    AddEditComponent,
     LoginComponent,
     RegisterComponent,
     ResetPasswordComponent,
-    VerifyEmailComponent
+    VerifyEmailComponent,
+    AddEditComponent
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     AccountRoutingModule,
-    
+    ReactiveFormsModule
   ]
 })
 export class AccountsModule {}

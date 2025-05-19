@@ -5,11 +5,12 @@ import { AccountService } from '../_services/account.service';
 
 @Component({
   selector: 'app-account-add-edit',
-  templateUrl: './add-edit.component.html'
+  templateUrl: './add-edit.component.html',
+  
 })
 export class AddEditComponent implements OnInit {
   form!: FormGroup;
-  id?: number;
+  id?: string;
   isAddMode!: boolean;
 
   constructor(
@@ -20,7 +21,7 @@ export class AddEditComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.id = +this.route.snapshot.params['id'];
+    this.id = this.route.snapshot.params['id'];
     this.isAddMode = !this.id;
 
     this.form = this.formBuilder.group({
@@ -31,7 +32,7 @@ export class AddEditComponent implements OnInit {
       password: [''],
     });
 
-    if (!this.isAddMode) {
+    if (!this.isAddMode && this.id) {
       this.accountService.getById(this.id).subscribe(account => {
         this.form.patchValue(account);
       });
