@@ -1,35 +1,67 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Employee } from '../_models/';
 import { environment } from '../../environments/environment';
-
-const baseUrl = `${environment.apiUrl}/employees`;
+import { switchMap, mergeMap } from 'rxjs/operators';
+import { WorkflowTrack } from './workflow-track.service';
+import { DepartmentService } from './department.service';
+import { forkJoin } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private workflowTrackerService: WorkflowTrack,
+    private departmentService: DepartmentService
+  ) { }
 
   getAll() {
-    return this.http.get<Employee[]>(baseUrl);
+    return this.http.get<any[]>(`${environment.apiUrl}/employees`);
   }
 
   getById(id: number) {
-    return this.http.get<Employee>(`${baseUrl}/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/employees/${id}`);
   }
 
-  create(params: any) {
-    return this.http.post(baseUrl, params);
+  create(employee: any) {
+    return this.http.post(`${environment.apiUrl}/employees`, employee);
   }
 
-  update(id: number, params: any) {
-    return this.http.put(`${baseUrl}/${id}`, params);
+  update(id: number, employee: any) {
+    // First get the current employee to check for department change
+    return this.getById(id).pipe(
+      switchMap(currentEmployee => {
+        // If department has changed, create a workflow entry
+        if (currentEmployee.departmentId !== employee.departmentId) {
+          // Get both department names for the workflow record
+          return forkJoin({
+            oldDept: this.departmentService.getById(currentEmployee.departmentId),
+            newDept: this.departmentService.getById(employee.departmentId)
+          }).pipe(
+            switchMap(depts => {
+              // Track the department change with department names
+              this.workflowTrackerService.trackDepartmentChange(
+                id,
+                currentEmployee.departmentId,
+                employee.departmentId,
+                depts.oldDept.name,
+                depts.newDept.name
+              ).subscribe({
+                error: error => console.error('Error tracking department change:', error)
+              });
+              
+              // Continue with the employee update
+              return this.http.put(`${environment.apiUrl}/employees/${id}`, employee);
+            })
+          );
+        } else {
+          // No department change, just update the employee
+          return this.http.put(`${environment.apiUrl}/employees/${id}`, employee);
+        }
+      })
+    );
   }
 
   delete(id: number) {
-    return this.http.delete(`${baseUrl}/${id}`);
-  }
-
-  transfer(id: number, departmentId: number) {
-    return this.http.post(`${baseUrl}/${id}/transfer`, { departmentId });
+    return this.http.delete(`${environment.apiUrl}/employees/${id}`);
   }
 }

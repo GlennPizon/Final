@@ -1,20 +1,11 @@
-import { Role } from './role';
-import { Employee } from './employee';
-
-
-export interface Account {
-  id: string; // UUID
-  email: string;
-  passwordHash?: string;
-  firstname: string;
-  lastname: string;
-  
-  role: Role;
-  isVerified: boolean;
-  verificationToken?: string;
-  resetToken?: string;
-  createdAt: string;
-  updatedAt: string;
-  // relations
-  employee?: Employee;
+import { Role } from "./role";
+export class Account {
+  id!: string;
+  title!: string;
+  firstName!: string;
+  lastName!: string;
+  email!: string;
+  role!: Role;
+  jwtToken?: string;
+  status!: string;
 }

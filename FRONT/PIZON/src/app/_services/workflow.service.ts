@@ -1,33 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Workflow } from '../_models';
 import { environment } from '../../environments/environment';
-
-const baseUrl = `${environment.apiUrl}/workflows`;
 
 @Injectable({ providedIn: 'root' })
 export class WorkflowService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getByEmployee(employeeId: number) {
-    return this.http.get<Workflow[]>(`${baseUrl}/employee/${employeeId}`);
-  }
-
-  create(params: any) {
-    return this.http.post(baseUrl, params);
+  getByEmployeeId(employeeId: number) {
+    return this.http.get<any[]>(`${environment.apiUrl}/workflows/employee/${employeeId}`);
   }
 
-  updateStatus(id: string, status: string) {
-    return this.http.put(`${baseUrl}/${id}/status`, { status });
+  create(workflow: any) {
+    return this.http.post(`${environment.apiUrl}/workflows`, workflow);
   }
 
-  initiateOnboarding(params: any) {
-    return this.http.post(`${baseUrl}/onboarding`, params);
-  }
-  getAll() {
-    return this.http.get<Workflow[]>(baseUrl);
-  }
-  getById(id: number) {
-    return this.http.get<Workflow>(`${baseUrl}/${id}`);
+  updateStatus(id: number, status: string) {
+    return this.http.put(`${environment.apiUrl}/workflows/${id}/status`, { status });
   }
 }

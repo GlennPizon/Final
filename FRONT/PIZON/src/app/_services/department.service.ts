@@ -1,31 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Department } from '../_models/department';
 import { environment } from '../../environments/environment';
-
-const baseUrl = `${environment.apiUrl}/departments`;
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll() {
-    return this.http.get<Department[]>(baseUrl);
+    return this.http.get<any[]>(`${environment.apiUrl}/departments`);
   }
 
   getById(id: number) {
-    return this.http.get<Department>(`${baseUrl}/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/departments/${id}`);
   }
 
-  create(params: any) {
-    return this.http.post(baseUrl, params);
+  create(department: any) {
+    return this.http.post(`${environment.apiUrl}/departments`, department);
   }
 
-  update(id: number, params: any) {
-    return this.http.put(`${baseUrl}/${id}`, params);
+  update(id: number, department: any) {
+    return this.http.put(`${environment.apiUrl}/departments/${id}`, department);
   }
 
   delete(id: number) {
-    return this.http.delete(`${baseUrl}/${id}`);
+    return this.http.delete(`${environment.apiUrl}/departments/${id}`);
   }
 }
