@@ -18,7 +18,7 @@ import requestRoutes from './requests/requests.routes';
 dotenv.config();
 
 const app = express();
-const PORT = parseInt(process.env.APP_PORT || '4000', 10);
+const PORT = process.env.APP_PORT;
 
 // Middleware
 app.use(cors({
