@@ -33,9 +33,9 @@ export class AddEditComponent implements OnInit {
 
     this.form = this.formBuilder.group({
       employeeId: ['', Validators.required],
-      userId: ['', Validators.required],
-      position: ['', Validators.required],
+      accountId: ['', Validators.required],
       departmentId: ['', Validators.required],
+      position: ['', Validators.required],
       hireDate: ['', Validators.required],
       status: ['Active']
     });
@@ -74,6 +74,7 @@ export class AddEditComponent implements OnInit {
         error: error => this.alertService.error(error)
       });
   }
+
 
   private updateEmployee() {
     this.employeeService.update(this.id, this.form.value)
