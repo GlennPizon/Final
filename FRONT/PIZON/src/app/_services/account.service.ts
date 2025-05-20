@@ -9,6 +9,8 @@ import { Account } from '../_models';
 
 const baseUrl = `${environment.apiUrl}/accounts`;
 
+console.log('baseUrl', baseUrl);
+console.log('environment.apiUrl', environment.apiUrl);
 @Injectable({ providedIn: 'root' })
 export class AccountService {
     private accountSubject: BehaviorSubject<Account>;
@@ -28,7 +30,7 @@ export class AccountService {
 
     login(email: string, password: string) {
         return this.http.post<any>(`${baseUrl}/authenticate`, { email, password }, { withCredentials: true })
-            .pipe(map(account => {
+                .pipe(map(account => {
                 this.accountSubject.next(account);
                 this.startRefreshTokenTimer();
                 return account;
