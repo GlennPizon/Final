@@ -53,8 +53,8 @@ export class AccountController {
 
   static async deleteAccount(req: Request, res: Response) {
     try {
-      const { id } = req.body;
-      const result = await accountService.delete(id);
+      
+      const result = await accountService.delete(req.params.id);
       res.json(result);
     } catch (err) {
       res.status(StatusCodes.UNAUTHORIZED).json({ msg: `Invalid email or password` });

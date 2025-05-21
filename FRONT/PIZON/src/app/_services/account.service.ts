@@ -101,14 +101,14 @@ export class AccountService {
     
     delete(id: string) {
         return this.http.delete(`${baseUrl}/${id}`)
-            .pipe(finalize(() => {
-                // auto logout if the logged in account was deleted
-                if (this.accountValue && id === this.accountValue.id){
+            .pipe(map(x => {
+                // auto logout if the logged in account deleted their own record
+                if (id === this.accountValue.id) {
                     this.logout();
                 }
+                return x;
             }));
     }
-    
 
     // helper methods
 
