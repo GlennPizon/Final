@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/_components/alert.component.css"],
+  "sourcesContent": [".alert {\r\n  padding: 10px;\r\n  border-radius: 5px;\r\n  font-weight: bold;\r\n}\r\n.success { background-color: #4CAF50; color: white; }\r\n.error { background-color: #F44336; color: white; }\r\n.warning { background-color: #FF9800; color: white; }\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,iBAAe;AACf,eAAa;AACf;AACA,CAAC;AAAU,oBAAkB;AAAS,SAAO;AAAO;AACpD,CAAC;AAAQ,oBAAkB;AAAS,SAAO;AAAO;AAClD,CAAC;AAAU,oBAAkB;AAAS,SAAO;AAAO;",
+  "names": []
+}

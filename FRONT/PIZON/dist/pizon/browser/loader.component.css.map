@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/_components/loader/loader.component.css"],
+  "sourcesContent": [".loader {\r\n  font-size: 18px;\r\n  font-weight: bold;\r\n  text-align: center;\r\n  padding: 20px;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,aAAW;AACX,eAAa;AACb,cAAY;AACZ,WAAS;AACX;",
+  "names": []
+}

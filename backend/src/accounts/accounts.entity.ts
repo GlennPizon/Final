@@ -57,7 +57,7 @@ import {
     @CreateDateColumn()
     created: Date;
   
-    @UpdateDateColumn()
+    @UpdateDateColumn({nullable: true})
     updated: Date;
 
     @Column({

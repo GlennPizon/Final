@@ -38,19 +38,20 @@ export class AccountService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const userCount = await this.userRepo.count();
-    const userrole = userCount === 0 ? Role.Admin : Role.User;
-    
-    //let the first user's status be active
-    if (userrole === Role.Admin) {
-      status = "Active";
-      role = Role.Admin;
+    if(userCount === 0 || role === Role.Admin){
+        role = Role.Admin;
+        status = "Active";
+      }
+    else {
+      role = Role.User;
+      status = "InActive";
     }
+   
+    
 
     const id = random();
     const token = random();
-    status = status || "Inactive"; // Default status if not provided
-    role = role || Role.User; // Default role if not provided
-
+  
 
     const newUser = this.userRepo.create({
       id,
@@ -62,10 +63,9 @@ export class AccountService {
       acceptTerms,
       role,
       status,
-      
-      verificationToken: token
+      verificationToken: token,
+      updated: null
     });
-
     await this.userRepo.save(newUser);
     await this.sendVerificationEmail(newUser, origin);
     return { message: "Registration successful, check your email to verify." };

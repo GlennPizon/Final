@@ -8,9 +8,9 @@ export const registerSchema = Joi.object({
   firstname: Joi.string().required(),
   lastname: Joi.string().required(),
   title: Joi.string().required(),
-  acceptTerms: Joi.boolean().valid(true).required(),
+  acceptTerms: Joi.boolean().valid(true).required().optional(),
   role: Joi.string().valid('Admin', 'User').optional(),// Only Admin should be allowed to send this
-  status: Joi.string().valid('Active', 'Inactive').optional()
+  status: Joi.string().valid('Active', 'InActive').optional()
 });
 
 export const authenticateSchema = Joi.object({

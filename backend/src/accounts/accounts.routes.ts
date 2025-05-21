@@ -7,7 +7,9 @@ import { Role } from '../utils/role';
 
 const router = Router();
 
-router.post('/register', validate(registerSchema), AccountController.register);
+router.post('/register', validate(registerSchema), AccountController.register);// Register user
+// Admin Create user
+router.post('/create', authorize([Role.Admin]), validate(registerSchema), AccountController.register); // Create user
 router.post('/verify-email', validate(verifyEmailSchema), AccountController.verifyEmail); // Email verification
 router.post('/authenticate', validate(authenticateSchema),AccountController.authenticate); // Authenticate user
 router.post('/forgot-password',validate(forgotPasswordSchema), AccountController.forgotPassword); // Forgot password

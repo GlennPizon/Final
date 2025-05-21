@@ -30,14 +30,16 @@ export class AddEditComponent implements OnInit {
         this.isAddMode = !this.id;
 
         this.form = this.formBuilder.group({
-            title: ['', Validators.required],
-            firstName: ['', Validators.required],
-            lastName: ['', Validators.required],
+            
             email: ['', [Validators.required, Validators.email]],
-            role: ['User', Validators.required],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: [''],
-            status: ['InActive']
+            firstname: ['', Validators.required],
+            lastname: ['', Validators.required],
+            title: ['', Validators.required],
+            role: ['', Validators.required],
+            status: ['',Validators.required],
+            acceptTerms: ['true']
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
@@ -66,10 +68,10 @@ export class AddEditComponent implements OnInit {
         this.loading = true;
         if (this.isAddMode) {
             this.createAccount();
-        } else {
-            this.updateAccount();
-        }
-    }
+        // } else {
+        //     this.updateAccount();
+        // }
+    }}
 
     private createAccount() {
         this.accountService.create(this.form.value)
@@ -86,18 +88,18 @@ export class AddEditComponent implements OnInit {
             });
     }
 
-    private updateAccount() {
-        this.accountService.update(this.id, this.form.value)
-            .pipe(first())
-            .subscribe({
-                next: () => {
-                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
-                    this.router.navigate(['../../'], { relativeTo: this.route });
-                },
-                error: error => {
-                    this.alertService.error(error);
-                    this.loading = false;
-                }
-            });
-    }
+    // private updateAccount() {
+    //     this.accountService.update(this.id, this.form.value)
+    //         .pipe(first())
+    //         .subscribe({
+    //             next: () => {
+    //                 this.alertService.success('Update successful', { keepAfterRouteChange: true });
+    //                 this.router.navigate(['../../'], { relativeTo: this.route });
+    //             },
+    //             error: error => {
+    //                 this.alertService.error(error);
+    //                 this.loading = false;
+    //             }
+    //         });
+    // }
 }

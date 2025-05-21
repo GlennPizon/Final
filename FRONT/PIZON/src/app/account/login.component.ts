@@ -31,24 +31,7 @@ export class LoginComponent implements OnInit {
             password: ['', Validators.required]
         });
 
-        // --- TEST THE PUBLIC API ENDPOINT ---
-        // Construct the URL correctly (relative or using environment.apiUrl)
-        // Since fake backend intercepts based on url.endsWith, a relative path is fine here.
-        // If you had a real backend, you'd use `${environment.apiUrl}/accounts/all`
-        const apiUrl = `/accounts/all`; // Relative path for fake backend
-
-        console.log('Attempting to fetch public accounts from:', apiUrl);
-
-        this.http.get<any[]>(apiUrl).subscribe({ // Expect an array
-            next: (accounts) => {
-                console.log('Successfully fetched public accounts:', accounts);
-                // You could display these somewhere in your template if needed
-            },
-            error: (error) => {
-                console.error('Error fetching public accounts:', error);
-            }
-        });
-        // --- END TEST ---
+                                  
     }
 
     // convenience getter for easy access to form fields
@@ -81,8 +64,5 @@ export class LoginComponent implements OnInit {
             });
     }
 
-    resetFakeBackendStorage() {
-        localStorage.removeItem(accountsKey);
-        location.reload();
-    }
+    
 }

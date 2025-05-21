@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/_models/role.ts"],
+  "sourcesContent": ["export enum Role {\r\n  Admin = 'Admin',\r\n  User = 'User'\r\n}\r\n"],
+  "mappings": ";AAAA,IAAY;CAAZ,SAAYA,OAAI;AACd,EAAAA,MAAA,OAAA,IAAA;AACA,EAAAA,MAAA,MAAA,IAAA;AACF,GAHY,SAAA,OAAI,CAAA,EAAA;",
+  "names": ["Role"]
+}

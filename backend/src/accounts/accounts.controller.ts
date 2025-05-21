@@ -10,12 +10,10 @@ const accountService = new AccountService();
 export class AccountController {
   static async register(req: Request, res: Response) {
     try {
-      const { email, password, confirmPassword, firstname, lastname, title, acceptTerms } = req.body;
-      if(password !== confirmPassword) throw new Error("Passwords do not match")
-      
+    
       const origin: string = req.get("origin") || `http://localhost:${process.env.APP_PORT}`;
       
-      const result = await accountService.register({ email, password, confirmPassword, firstname, lastname, title, acceptTerms }, origin);
+      const result = await accountService.register(req.body, origin);
       res.status(StatusCodes.CREATED).json(result); 
     } catch (err: any) {
       console.error("Registration Error:", err);
