@@ -60,6 +60,13 @@ import {
     @UpdateDateColumn()
     updated: Date;
 
+    @Column({
+      type: 'enum',
+      enum: ['Active', 'Inactive'],
+      default: 'Inactive'
+    })
+    status: string;
+
     get isVerified(): boolean {
     return !!this.verified || !!this.passwordReset;
   }

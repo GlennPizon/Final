@@ -23,7 +23,8 @@ export class AccountService {
   private userRepo = AppDataSource.getRepository(Accounts);
   private refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
 
-  async register({ email, password, confirmPassword, firstname, lastname, title, acceptTerms }, origin): Promise<{ message: string }> {
+  async register({ 
+    email, password, confirmPassword, firstname, lastname, title, acceptTerms,role,status }, origin): Promise<{ message: string }> {
     if (!acceptTerms) throw new Error("You must accept the terms and conditions.");
     if (!email || !password || !confirmPassword || !firstname || !lastname || !title)
       throw new Error("All fields must be provided");
@@ -37,9 +38,19 @@ export class AccountService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const userCount = await this.userRepo.count();
-    const role = userCount === 0 ? Role.Admin : Role.User;
+    const userrole = userCount === 0 ? Role.Admin : Role.User;
+    
+    //let the first user's status be active
+    if (userrole === Role.Admin) {
+      status = "Active";
+      role = Role.Admin;
+    }
+
     const id = random();
     const token = random();
+    status = status || "Inactive"; // Default status if not provided
+    role = role || Role.User; // Default role if not provided
+
 
     const newUser = this.userRepo.create({
       id,
@@ -50,7 +61,9 @@ export class AccountService {
       passwordHash: hashedPassword,
       acceptTerms,
       role,
-      verificationToken: token,
+      status,
+      
+      verificationToken: token
     });
 
     await this.userRepo.save(newUser);
@@ -112,6 +125,7 @@ export class AccountService {
     newAccount.verified = new Date();
     newAccount.created = new Date();
     newAccount.updated = new Date();
+    newAccount.status = "Inactive"; // Default status
 
 
     // Save account to the database

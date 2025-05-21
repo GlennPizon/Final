@@ -8,7 +8,9 @@ export const registerSchema = Joi.object({
   firstname: Joi.string().required(),
   lastname: Joi.string().required(),
   title: Joi.string().required(),
-  acceptTerms: Joi.boolean().valid(true).required()
+  acceptTerms: Joi.boolean().valid(true).required(),
+  role: Joi.string().valid('Admin', 'User').optional(),// Only Admin should be allowed to send this
+  status: Joi.string().valid('Active', 'Inactive').optional()
 });
 
 export const authenticateSchema = Joi.object({
@@ -44,7 +46,8 @@ export const updateAccountSchema = Joi.object({
   password: Joi.string().min(6).optional(),
   confirmPassword: Joi.string().valid(Joi.ref('password')).optional(),
   role: Joi.string().valid('Admin', 'User').optional(), // Only Admin should be allowed to send this
-  acceptTerms: Joi.boolean().optional()
+  acceptTerms: Joi.boolean().optional(),
+  status: Joi.string().valid('Active', 'Inactive').optional()
 });
 
 
